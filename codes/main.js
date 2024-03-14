@@ -87,9 +87,9 @@
             var dataSourceDisplayNames = {
                 "pois-leisure": " leisure spots",
                 "pois-health": " healthcare centers",
+                "pois-pharmacy": " pharmacies",
                 "pois-bank": " bank offices",
                 "pois-atm": " ATMs",
-                "pois-pharmacy": " pharmacies",
                 "pois-payment": " payment kiosks"
             };
 
@@ -97,17 +97,18 @@
             var selectedDataSource = document.getElementById("data_source").value;
             var dataUrl;
             if (selectedDataSource === "pois-leisure") {
-                dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-eatout.geojson";
+                dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-leisure.geojson";
             } else if (selectedDataSource === "pois-health") {
                 dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-health.geojson";
-            } else if (selectedDataSource === "pois-bank") {
-                dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-financial.geojson";
-            } else if (selectedDataSource === "pois-atm") {
-                dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-financial.geojson";
             } else if (selectedDataSource === "pois-pharmacy") {
-                dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-financial.geojson";
+                dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-pharmacy.geojson";
+            } else if (selectedDataSource === "pois-bank") {
+                dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-bank.geojson";
+            } else if (selectedDataSource === "pois-atm") {
+                dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-atm.geojson";
+            } else if (selectedDataSource === "pois-payment") {
+                dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-payment_terminal.geojson";
             }
-
 
             if (dataUrl) {
                 fetch(dataUrl)
@@ -156,28 +157,39 @@
             
             // Define colors for each category
 
+            var defaultColor = "#cccccc"; // Default color for unspecified categories
+
             var categoryColors = {
                 bar: "#c51b7d", // Color for bar
                 cafe: "#fdbf6f", // Color for cafe
                 restaurant: "#80cdc1", // Color for restaurant
+                nightclub: "#41b6c4", // Color for nightclub
                 clinic: "#a6cee3", // Color for clinic
                 dentist: "#cab2d6", // Color for dentist
                 hospital: "#fb9a99", // Color for hospital
-                pharmacy: "#fdbf6f", // Color for pharmacy
                 veterinary: "#b2df8a", // Color for veterinary
-                atm: "#ffff99", // Color for atm
-                payment_terminal: "#ff7f00", // Color for payment_terminal
-                bank: "#33a02c", // Color for bank
+                PSP: "#c6227f", // Color for PSP
+                Aversi: "#ff3648", // Color for Aversi
+                GPC: "#014c97", // Color for GPC
+                Pharmadepot: "#06a9ad", // Color for Pharmadepot
+                Bank_of_Georgia: "#ff610f", // Color for Bank of Georgia
+                TBC_Bank: "#00a3e0", // Color for TBC Bank 
+                Liberty: "#db2211", // Color for Liberty Bank 
             };
-
+            
+            // Function to get color based on category
+            function getColor(category) {
+                return categoryColors[category] || defaultColor;
+            }
+            
             // Iterate over each category and update legend
             for (var category in counts) {
                 if (counts.hasOwnProperty(category)) {
                     // Create a color circle for the category
                     var colorCircle = document.createElement("span");
                     colorCircle.className = "legend-circle";
-                    colorCircle.style.backgroundColor = categoryColors[category] || "#000"; // Default color
-
+                    colorCircle.style.backgroundColor = getColor(category);
+            
                     // Create a legend item for the category
                     var legendItem = document.createElement("p");
                     legendItem.innerHTML =
@@ -186,11 +198,11 @@
                         category.replace("_", " ") +
                         ":</strong> " +
                         counts[category];
-
+            
                     // Append legend item to the legend
                     legend.appendChild(legendItem);
                 }
-            }
+            }            
 
             // Add total point count to the legend
             //legend.innerHTML += "<p><strong>Total:</strong> " + totalCount + "</p>";
@@ -253,29 +265,25 @@ map.on("load", function () {
             "circle-color": [            
             "match",
             ["get", "amenity"], // Property to base the color on            
-            "bar", 
-            "#c51b7d", // Color for bars            
-            "cafe",                   
-            "#fdbf6f", // Color for cafes                   
-            "restaurant",                   
-            "#80cdc1", // Color for restaurants
-            "clinic",                   
-            "#a6cee3", // Color for clinics        
-            "dentist",
-            "#cab2d6", // Color for dentist            
-            "hospital",            
-            "#fb9a99", // Color for hospitals
-            "pharmacy",            
-            "#fdbf6f", // Color for pharmacieს            
-            "veterinary",            
-            "#b2df8a", // Color for veterinaries
-            "atm",         
-            "#ffff99", // Color for ATMs
-            "payment_terminal",                     
-            "#ff7f00", // Color for payment terminals
-            "bank",
-            "#33a02c", // Color for banks 
-            "#000000", // Default color
+            "bar","#c51b7d", // Color for bars            
+            "cafe","#fdbf6f", // Color for cafes                   
+            "restaurant","#80cdc1", // Color for restaurants
+            "nightclub","#41b6c4",// Color for restaurants
+            "clinic","#a6cee3", // Color for clinics        
+            "dentist","#cab2d6", // Color for dentist            
+            "hospital","#fb9a99", // Color for hospitals   
+            "veterinary","#b2df8a", // Color for veterinaries
+            "PSP","#c6227f", // Color for PSP
+            "Aversi","#ff3648", // Color for Aversi
+            "GPC","#014c97", // Color for GPC
+            "Pharmadepot","#06a9ad", // Color for Pharmadepot  
+            "Bank of Georgia","#ff610f", // Color for Bank of Georgia
+            "TBC Bank","#00a3e0", // Color for TBC Bank 
+            "Liberty","#db2211", // Color for Liberty Bank 
+            // Add more explicitly stated categories and colors as needed
+            // If category is not explicitly stated, assign a default color
+            // The last value in the paint expression will act as the default color
+            "#000000" // Default color for all other categories
         ],
     },
 }); 
@@ -326,3 +334,9 @@ document.addEventListener("DOMContentLoaded", function () {
             generateIsochrone(lngLat);
         });
     });
+
+    // Add logging to check feature properties
+map.on('click', 'featuresWithinIsochrone-layer', function (e) {
+    var feature = e.features[0];
+    console.log('Clicked feature properties:', feature.properties);
+});
