@@ -160,49 +160,63 @@
             var defaultColor = "#cccccc"; // Default color for unspecified categories
 
             var categoryColors = {
-                bar: "#c51b7d", // Color for bar
-                cafe: "#fdbf6f", // Color for cafe
-                restaurant: "#80cdc1", // Color for restaurant
-                nightclub: "#41b6c4", // Color for nightclub
-                clinic: "#a6cee3", // Color for clinic
-                dentist: "#cab2d6", // Color for dentist
-                hospital: "#fb9a99", // Color for hospital
-                veterinary: "#b2df8a", // Color for veterinary
-                PSP: "#c6227f", // Color for PSP
-                Aversi: "#ff3648", // Color for Aversi
-                GPC: "#014c97", // Color for GPC
-                Pharmadepot: "#06a9ad", // Color for Pharmadepot
-                Bank_of_Georgia: "#ff610f", // Color for Bank of Georgia
-                TBC_Bank: "#00a3e0", // Color for TBC Bank 
-                Liberty: "#db2211", // Color for Liberty Bank 
+    
+                "bar": "#c51b7d", // Color for bar
+                "cafe": "#fdbf6f", // Color for cafe
+                "restaurant": "#80cdc1", // Color for restaurant
+                "nightclub": "#41b6c4", // Color for nightclub
+                "clinic": "#a6cee3", // Color for clinic
+                "dentist": "#cab2d6", // Color for dentist
+                "hospital": "#fb9a99", // Color for hospital
+                "veterinary": "#b2df8a", // Color for veterinary
+                "PSP": "#c6227f", // Color for PSP
+                "Aversi": "#ff3648", // Color for Aversi
+                "GPC": "#014c97", // Color for GPC
+                "Pharmadepot": "#06a9ad", // Color for Pharmadepot
+                "Bank of Georgia": "#ff610f", // Color for Bank of Georgia
+                "TBC Bank": "#00a3e0", // Color for TBC Bank 
+                "Liberty": "#db2211", // Color for Liberty Bank
+                "BasisBank": "#1d91c0",
+                "Cartu Bank":"#ffeda0",
+                "Credo Bank":"#6a51a3",
+                "Crystal":"#f768a1",
+                "Halyk Bank":"#74c476",
+                "IsBank":"#9ecae1",
+                "ProCredit Bank":"#fb9a99",
+                "Terabank":"#9F1D6C",
+                "Ziraat Bank":"https://www.ziraatbank.com.tr/SiteAssets/images/logo.gif",
             };
-            
+
             // Function to get color based on category
             function getColor(category) {
                 return categoryColors[category] || defaultColor;
             }
-            
+
             // Iterate over each category and update legend
+
             for (var category in counts) {
                 if (counts.hasOwnProperty(category)) {
+
+                    // Replace null values with "other"
+                    var categoryName = category === "null" ? "Other" : category;
+
                     // Create a color circle for the category
                     var colorCircle = document.createElement("span");
                     colorCircle.className = "legend-circle";
-                    colorCircle.style.backgroundColor = getColor(category);
-            
+                    colorCircle.style.backgroundColor = getColor(categoryName);
+       
                     // Create a legend item for the category
                     var legendItem = document.createElement("p");
                     legendItem.innerHTML =
-                        colorCircle.outerHTML +
-                        "<strong>" +
-                        category.replace("_", " ") +
-                        ":</strong> " +
-                        counts[category];
-            
+                    colorCircle.outerHTML +
+                    "<strong>" +
+                    categoryName.replace("_", " ") +
+                    ":</strong> " +
+                    counts[category];
                     // Append legend item to the legend
                     legend.appendChild(legendItem);
                 }
-            }            
+            }         
 
             // Add total point count to the legend
             //legend.innerHTML += "<p><strong>Total:</strong> " + totalCount + "</p>";
@@ -260,7 +274,7 @@ map.on("load", function () {
         type: "circle",                
         source: "featuresWithinIsochrone",                
         paint: {
-            "circle-radius": 3,        
+            "circle-radius": 4,        
             "circle-opacity": 1,        
             "circle-color": [            
             "match",
@@ -280,6 +294,15 @@ map.on("load", function () {
             "Bank of Georgia","#ff610f", // Color for Bank of Georgia
             "TBC Bank","#00a3e0", // Color for TBC Bank 
             "Liberty","#db2211", // Color for Liberty Bank 
+            "BasisBank","#1d91c0",
+            "Cartu Bank","#ffeda0",
+            "Credo Bank","#6a51a3",
+            "Crystal","#f768a1",
+            "Halyk Bank","#74c476",
+            "IsBank","#9ecae1",
+            "ProCredit Bank","#fb9a99",
+            "Terabank","#9F1D6C",
+            "Ziraat Bank","#f781bf",
             // Add more explicitly stated categories and colors as needed
             // If category is not explicitly stated, assign a default color
             // The last value in the paint expression will act as the default color
