@@ -161,10 +161,12 @@
             var counts = {};
             pointsWithinIsochrone.features.forEach(function (feature) {
                 var category = feature.properties.amenity;
-                if (!counts[category]) {
-                    counts[category] = 0;
+                if (category !==["soft", "injury"]) { // exclude car-crash layer 
+                    if (!counts[category]) {
+                        counts[category] = 0;
+                    }
+                    counts[category]++;
                 }
-                counts[category]++;
             });
 
             // Calculate total point count
@@ -227,6 +229,10 @@
 
             for (var category in counts) {
                 if (counts.hasOwnProperty(category)) {
+                    // Skip he car-crashes category
+                    //if (category == ["soft", "injury"]) {
+                        //continue;
+                    //}
 
                     // Replace null values with "other"
                     var categoryName = category === "null" ? "Other" : category;
