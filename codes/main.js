@@ -73,8 +73,8 @@
 
             // Fit the map view to the bounding box of the isochrone
             map.fitBounds(bbox, {
-                bearing: -35,
-                pitch: 52,
+                //bearing: -35,
+                //pitch: 52,
                 padding: {
                     top: 50, 
                     right: 50, 
@@ -90,7 +90,9 @@
                 "pois-pharmacy": " pharmacies",
                 "pois-bank": " bank offices",
                 "pois-atm": " ATMs",
-                "pois-payment": " payment kiosks"
+                "pois-payment": " payment kiosks",
+                "car-crashes": " car crashes recorded"
+
             };
 
             // Fetch point features from selected data source
@@ -108,6 +110,8 @@
                 dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-atm.geojson";
             } else if (selectedDataSource === "pois-payment") {
                 dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-payment_terminal.geojson";
+            } else if (selectedDataSource === "car-crashes") {
+                dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/car-crashes.geojson";
             }
 
             if (dataUrl) {
@@ -131,6 +135,28 @@
             // Remove existing data for points outside the isochrone
             map.getSource("featuresWithinIsochrone").setData(pointsWithinIsochrone);
 
+            // Function to calculate Shannon Diversity Index
+            function calculateShannonIndex(counts) {
+                var totalCount = 0;
+                var shannonIndex = 0;
+    
+                // Calculate total count
+                for (var category in counts) {
+                    if (counts.hasOwnProperty(category)) {
+                        totalCount += counts[category];
+                    }
+                }
+    
+                // Calculate Shannon Diversity Index
+                for (var category in counts) {
+                    if (counts.hasOwnProperty(category)) {
+                        var p = counts[category] / totalCount;
+                        shannonIndex -= p * Math.log(p);
+                    }
+                }
+                return shannonIndex;
+            }
+
             // Count points by category
             var counts = {};
             pointsWithinIsochrone.features.forEach(function (feature) {
@@ -144,27 +170,30 @@
             // Calculate total point count
             var totalCount = pointsWithinIsochrone.features.length;
 
+            // Calculate Shannon Diversity Index
+            var shannonIndex = calculateShannonIndex(counts);
+
             // Look up the display name based on the selected data source value
             var selectedDataSourceDisplayName = dataSourceDisplayNames[selectedDataSource];
 
             // Update legend title based on selected data source
             var legendTitle = document.getElementById("legend-title");
-            legendTitle.innerHTML = "<p>There are a total of " + "<strong> <span class='innerhtml' style='color: yellow; background-color: black'>" + totalCount + "</strong></span>" + (selectedDataSourceDisplayName || selectedDataSource.toUpperCase()) + " within " + "<strong> <span class='innerhtml' style='color: yellow; background-color: black'>" + contours_minutes + " minutes " + profile + "</span></strong> distance</p>";
+            legendTitle.innerHTML = "<p>" + "<strong> <span class='innerhtml' style='color: yellow; background-color: black'>" + totalCount + "</strong></span>" + (selectedDataSourceDisplayName || selectedDataSource.toUpperCase()) + " within " + "<strong> <span class='innerhtml' style='color: yellow; background-color: black'>" + contours_minutes + " minutes " + profile + "</span></strong> distance</p>";
 
             // Clear the legend before updating it with new items
             var legend = document.getElementById("legend");
             legend.innerHTML="";
             
-            // Define colors for each category
+            // Define colors for each category for legend
 
             var defaultColor = "#cccccc"; // Default color for unspecified categories
 
             var categoryColors = {
     
-                "bar": "#c51b7d", // Color for bar
-                "cafe": "#fdbf6f", // Color for cafe
-                "restaurant": "#80cdc1", // Color for restaurant
-                "nightclub": "#41b6c4", // Color for nightclub
+                "bar":"#e31a1c", // Color for bar
+                "cafe":"#33a02c", // Color for cafe
+                "restaurant":"#ff7f00", // Color for restaurant
+                "nightclub":"#984ea3", // Color for nightclub
                 "clinic": "#a6cee3", // Color for clinic
                 "dentist": "#cab2d6", // Color for dentist
                 "hospital": "#fb9a99", // Color for hospital
@@ -184,7 +213,9 @@
                 "IsBank":"#9ecae1",
                 "ProCredit Bank":"#fb9a99",
                 "Terabank":"#9F1D6C",
-                "Ziraat Bank":"https://www.ziraatbank.com.tr/SiteAssets/images/logo.gif",
+                "Ziraat Bank":"#f781bf",
+                "soft":"#4d9221",
+                "injury":"#c51b7d",
             };
 
             // Function to get color based on category
@@ -216,7 +247,12 @@
                     // Append legend item to the legend
                     legend.appendChild(legendItem);
                 }
-            }         
+            }  
+            
+            // Add Shannon Diversity Index to the legend
+            var shannonLegendItem = document.createElement("p");
+            shannonLegendItem.innerHTML = "<strong>Shannon Diversity Index:</strong> " + shannonIndex.toFixed(2);
+            legend.appendChild(shannonLegendItem);
 
             // Add total point count to the legend
             //legend.innerHTML += "<p><strong>Total:</strong> " + totalCount + "</p>";
@@ -255,8 +291,21 @@ map.on("load", function () {
         source: "isochrone",
         layout: {},
         paint: {        
-            "fill-color": "#f768a1",
+            "fill-color": "#b3cde3",
             "fill-opacity": 0.5,
+        },        
+    });
+
+    // Add outline layer for the polygon
+
+    map.addLayer({        
+        id: "outline",
+        type: "line",                
+        source: "isochrone",
+        layout: {},
+        paint: {        
+            "line-color": "#f7f7f7",
+            "line-width": 2,
         },        
     });
             
@@ -275,14 +324,17 @@ map.on("load", function () {
         source: "featuresWithinIsochrone",                
         paint: {
             "circle-radius": 4,        
-            "circle-opacity": 1,        
+            "circle-opacity": 1, 
+            // Outline properties
+            "circle-stroke-color": "#ffffff", // Color of the outline
+            "circle-stroke-width": 1.2, // Width of the outline in pixels       
             "circle-color": [            
             "match",
             ["get", "amenity"], // Property to base the color on            
-            "bar","#c51b7d", // Color for bars            
-            "cafe","#fdbf6f", // Color for cafes                   
-            "restaurant","#80cdc1", // Color for restaurants
-            "nightclub","#41b6c4",// Color for restaurants
+            "bar","#e31a1c", // Color for bar
+            "cafe","#33a02c", // Color for cafe
+            "restaurant","#ff7f00", // Color for restaurant
+            "nightclub","#984ea3", // Color for nightclub
             "clinic","#a6cee3", // Color for clinics        
             "dentist","#cab2d6", // Color for dentist            
             "hospital","#fb9a99", // Color for hospitals   
@@ -303,10 +355,12 @@ map.on("load", function () {
             "ProCredit Bank","#fb9a99",
             "Terabank","#9F1D6C",
             "Ziraat Bank","#f781bf",
+            "soft","#4d9221",
+            "injury","#c51b7d",
             // Add more explicitly stated categories and colors as needed
             // If category is not explicitly stated, assign a default color
             // The last value in the paint expression will act as the default color
-            "#000000" // Default color for all other categories
+            "#cccccc" // Default color for all other categories
         ],
     },
 }); 
