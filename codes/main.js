@@ -111,7 +111,7 @@
             } else if (selectedDataSource === "pois-payment") {
                 dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-payment_terminal.geojson";
             } else if (selectedDataSource === "car-crashes") {
-                dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/car-crashes.geojson";
+                dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/car_crashes.geojson";
             }
 
             if (dataUrl) {
