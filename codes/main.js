@@ -8,13 +8,29 @@
             //bearing: -36.26,
             //pitch: 72.29,
             attributionControl: false,
+            preserveDrawingBuffer: true,
         });
 
         // Add zoom and rotation controls to the map.
-        //map.addControl(new mapboxgl.NavigationControl());
+        map.addControl(new mapboxgl.NavigationControl());
 
         // Add a scale control to the map
         map.addControl(new mapboxgl.ScaleControl());
+
+        // Get all fly buttons
+        const flyButtons = document.querySelectorAll('.fly-button');
+
+        // Add click event listener to each button
+        flyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+        
+                // Remove 'selected' class from all buttons
+                flyButtons.forEach(btn => btn.classList.remove('selected'));
+        
+                // Add 'selected' class to the clicked button
+                button.classList.add('selected');
+            });
+        });
 
         var marker;
         map.on("click", function (e) {
@@ -76,10 +92,10 @@
                 //bearing: -35,
                 //pitch: 52,
                 padding: {
-                    top: 50, 
-                    right: 50, 
-                    bottom: 50, 
-                    left: 50
+                    top: 90, 
+                    right: 30, 
+                    bottom: 30, 
+                    left: 90
                 }
             }); // Adjust padding as needed
 
@@ -92,7 +108,6 @@
                 "pois-atm": " ATMs",
                 "pois-payment": " payment kiosks",
                 "car-crashes": " car crashes recorded"
-
             };
 
             // Fetch point features from selected data source
@@ -161,12 +176,10 @@
             var counts = {};
             pointsWithinIsochrone.features.forEach(function (feature) {
                 var category = feature.properties.amenity;
-                if (category !==["soft", "injury"]) { // exclude car-crash layer 
-                    if (!counts[category]) {
-                        counts[category] = 0;
-                    }
-                    counts[category]++;
+                if (!counts[category]) {
+                    counts[category] = 0;
                 }
+                counts[category]++;
             });
 
             // Calculate total point count
@@ -191,7 +204,6 @@
             var defaultColor = "#cccccc"; // Default color for unspecified categories
 
             var categoryColors = {
-    
                 "bar":"#e31a1c", // Color for bar
                 "cafe":"#33a02c", // Color for cafe
                 "restaurant":"#ff7f00", // Color for restaurant
@@ -225,15 +237,12 @@
                 return categoryColors[category] || defaultColor;
             }
 
-            // Iterate over each category and update legend
+            // Check if the car-crash layer is active
+            var isCarCrashLayerActive = selectedDataSource === 'car-crashes';
 
+            // Iterate over each category and update legend
             for (var category in counts) {
                 if (counts.hasOwnProperty(category)) {
-                    // Skip he car-crashes category
-                    //if (category == ["soft", "injury"]) {
-                        //continue;
-                    //}
-
                     // Replace null values with "other"
                     var categoryName = category === "null" ? "Other" : category;
 
@@ -250,15 +259,20 @@
                     categoryName.replace("_", " ") +
                     ":</strong> " +
                     counts[category];
-                    // Append legend item to the legend
-                    legend.appendChild(legendItem);
+
+                    // Append legend item to the legend only if the car-crash layer is not active
+                    if (!isCarCrashLayerActive || category !== 'Shannon diversity index') {
+                        legend.appendChild(legendItem);
+                    }
                 }
-            }  
-            
-            // Add Shannon Diversity Index to the legend
-            var shannonLegendItem = document.createElement("p");
-            shannonLegendItem.innerHTML = "<strong>Shannon Diversity Index:</strong> " + shannonIndex.toFixed(2);
-            legend.appendChild(shannonLegendItem);
+            }
+
+            // Add Shannon Diversity Index to the legend if the car-crash layer is not active
+            if (!isCarCrashLayerActive) {
+                var shannonLegendItem = document.createElement("p");
+                shannonLegendItem.innerHTML = "<strong><span class='innerhtml' style='color: yellow; background-color: black'>Diversity: " + shannonIndex.toFixed(2) + "</strong></span>";
+                legend.appendChild(shannonLegendItem);
+            }
 
             // Add total point count to the legend
             //legend.innerHTML += "<p><strong>Total:</strong> " + totalCount + "</p>";
@@ -270,9 +284,7 @@
         .catch(function (error) {
             console.log("Error fetching data from selected data source:", error);
         });
-
-    }
-           
+    }           
 })             
             
 .catch(function (error) {              
@@ -310,8 +322,13 @@ map.on("load", function () {
         source: "isochrone",
         layout: {},
         paint: {        
-            "line-color": "#f7f7f7",
-            "line-width": 2,
+            "line-color": "#fff7bc",
+            "line-width": 1.5,
+            "line-opacity": 1, // [
+                //"interpolate", ["linear"], ["zoom"],
+                //0, 1, // Fully opaque when zoomed out
+                //10, 0.5 // Partially transparent when zoomed in
+            //]
         },        
     });
             

@@ -2,7 +2,15 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>URBANYXv0.1 | analytics made simple</title>
+        <link rel="canonical" href="https://glitch-hello-website.glitch.me/" />
+        <meta name="description" content="A simple website, built with Glitch. Remix it to get your own."/>
+        <meta name="robots" content="index,follow" />
+        <meta property="og:title" content="URBANYXv0.1 | analytics made simple" />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content="https://glitch-hello-website.glitch.me/" />
+        <meta property="og:description" content="A simple website, built with Glitch. Remix it to get your own."/>
+        <meta property="og:image" content="https://cdn.glitch.com/605e2a51-d45f-4d87-a285-9410ad350515%2Fhello-website-social.png?v=1616712748147"/>
+        <!--<meta name="twitter:card" content="summary" />-->
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>    
         <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.js"></script>
         <link
@@ -47,13 +55,28 @@ body {
 
 h1 {
     font-family: JetBrains Mono, monospace;
-    font-size: 25px;
-    color: #ffffff;
-    margin: 0;
+    font-size: 75px;
+    color: rgba(255, 255, 255, 0.25);
+    -webkit-text-stroke: 1px #ffffff; /* Add a 1px black stroke */
+    margin: 10px 0 0 0;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg); /* Rotate the text 180 degrees */
     font-weight: 800;
-    line-height: 1.2;
-    padding: 10px;
-    text-align: center;
+    /*line-height: 1.2;*/
+    padding: 0;
+    text-align: left;
+}
+
+p.beta {
+    font-family: JetBrains Mono, monospace;
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.75);;
+    text-align: left;
+    /*writing-mode: horizontal-tb;
+    transform: rotate(180deg); /* Rotate the text 180 degrees */
+    font-weight: 800;
+    margin: 10px 0 0 20px;
+    padding: 0;
 }
 
 .how-to {
@@ -92,28 +115,33 @@ gets 2/3 of the page. You can adjust this to your personal liking. */
     position: absolute;
     left: 25%;
     width: 75%;
-    top: 5%;  
+    top: 0;  
     bottom: 5%;
 }
 
 .heading {
     position: absolute;
-    background: #6c86cf;
-    box-shadow: 0 0 150px 0 #35414c;
+    background: transparent; /*#6c86cf*/
+    /*box-shadow: 0 0 150px 0 #35414c;*/
     top: 0;
     left: 25%;
     width: 75%;
     height: 7.5%;
-    line-height: 100px;
-    padding: 0 10px 10px 0;
+    margin: 0;
+    /*line-height: 100px;*/
     z-index: 1;
+}
+
+#params {
+    margin-bottom: 20px;
 }
 
 .main-container {
     display: flex;
     flex-direction: column;
     margin: 0 0 0 0;
-    padding: 0 20px 10px 20px;
+    padding: 0 20px 0 20px;
+    margin-bottom: 20px;
     box-shadow: 0 0 20px 0 #e3f0fc;
     border-radius: 5px;
 }
@@ -130,6 +158,26 @@ h4.city {
     font-family: JetBrains Mono, monospace;
     font-size: 1rem;
     font-weight: bold;
+}
+
+.intro {
+    text-align: justify;
+    font-family: JetBrains Mono, monospace;
+    font-size: 0.9rem;
+    font-weight: 300;
+    margin: 10px;
+}
+
+a.index {
+    background-color: black; 
+    color: yellow;
+    font-weight: 600;
+}
+
+a.index:hover {
+    cursor: pointer; 
+    background-color: #6c86cf; 
+    color: #ffffff;
 }
 
 .details {
@@ -177,29 +225,11 @@ input[type="radio"] {
     transform: translate(-4px, -4px); /* Adjust hover effect */
 }
 
-/*.toggle {
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 40px;
-  background-color: #ffffff; /* Default background color */
-  /*color: #4a04fc; /* Default text color */
-  /*transition: background-color 0.3s, color 0.3s;
-}
-
-.toggle:hover {
-  border: 2px solid #810f7c;
-  background-color: #ffffff; /* Darker color on hover */
- /* color: #4a04fc; /* Default text color */
-/*}*/
-
 .toggle.selected {
-    box-shadow: 4px 4px 0 #810f7c;
-    background-color: #7ca6d0; /* Selected background color */
-    color: #ffffff; /* Selected text color */
-}
-
-.fly-buttons {
-    margin-top: 15px;
+    color: white;
+    background: rgb(108, 134, 207);
+    box-shadow: 4px 4px 0 #810f7c; /* Add box shadow on hover */
+    transform: translate(-4px, -4px); /* Adjust hover effect */
 }
 
 #contours {
@@ -290,16 +320,26 @@ option  {
     margin-left: 15px;
 }
 
+.fly-buttons-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    position: fixed;
+    left: 25%;
+    right: 0;
+    bottom: 5%;
+    z-index: 10;
+}
+
 .fly-button {
-    display: inline-block;
     cursor: pointer;
     font-weight: 400;
-    border-radius: 3px;
-    color: #810f7c;
-    background: transparent;
+    border-radius: 0%;
+    color: #ffffff;
+    background: rgba(108, 134, 207);
     line-height: 1.15;
     font-family: JetBrains Mono, monospace;
-    font-size: 14px;
+    font-size: 18px;
     height: 36px;
     word-spacing: 0px;
     letter-spacing: 0.0892857143em;
@@ -308,17 +348,55 @@ option  {
     transition: all 0.14s ease-out;
     border: none; /* Remove border */
     outline: none; /* Remove outline */
+    z-index: 1;
+}
+
+#tbilisi {
+    border-top: 1.2px solid rgb(255, 255, 255);
+    border-left: 1.2px solid rgb(255, 255, 255);
+}
+
+#akhaltsikhe {
+    border-top: 1.2px solid rgb(255, 255, 255);
+    border-right: 1.2px solid rgb(255, 255, 255);
+}
+
+#batumi, #gori, #kutaisi, #sokhumi, #poti, #zugdidi {
+    border-top: 1.2px solid rgb(255, 255, 255);
 }
 
 .fly-button:hover {
+    color: #810f7c;
     background: #f4f4f4;
     box-shadow: 4px 4px 0 #810f7c ; /* Add box shadow on hover */
     transform: translate(-4px, -4px); /* Adjust hover effect */
 }
 
 .fly-button.selected {
+    color: #810f7c;
     background: #f4f4f4;
     box-shadow: 4px 4px 0 #810f7c ; /* Add box shadow on hover */
+    transform: translate(-4px, -4px); /* Adjust hover effect */
+}
+
+#note {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 5%;
+    width: 100%;
+    text-align: left;
+    padding: 10px;
+    border-top: 1.2px solid rgb(110, 136, 209);
+    color: rgb(108, 134, 207);
+}
+
+.note {
+    font-family: JetBrains Mono, monospace;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: left;
+    margin: 5px;
 }
 
 footer {
@@ -331,12 +409,13 @@ footer {
     padding: 10px;
     background: rgb(108, 134, 207);
     color: white;
-    box-shadow: 0 0 50px 0 #ffffff;
+    border-top: 1.2px solid white;
 }
 
 .footer {
     font-family: JetBrains Mono, monospace;
     font-size: 12px;
+    font-weight: 600;
     text-align: left;
     margin: 5px;
 }
@@ -344,16 +423,18 @@ footer {
 #legend {
     display: none;
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    bottom: 50px;
+    left: 10px;
     color:rgba(255, 255, 255, 0.9);
     font-family:  JetBrains Mono, monospace;
     font-size: 15px;
     background: rgba(108, 134, 207, 0.75);
-    width: 250px;
+    /*width: 250px;*/
     margin: 0 0 0 0;
     padding: 0 20px 10px 20px;
     box-shadow: 0 0 20px 0 #35414c;
+    /*border-top: 1.2px solid white;
+    border-left: 1.2px solid white;*/
     border-radius: 5px;
     z-index: 1000;
     -webkit-box-sizing: border-box;
@@ -371,7 +452,7 @@ footer {
     margin-left: auto;
     margin-right: auto;
     position: absolute;
-    top: 0;
+    top: 20px;
     font-family:  JetBrains Mono, monospace;
     font-size: 25px;
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
@@ -398,13 +479,34 @@ footer {
     background-color: rgba(108, 134, 207, 0.75);
     color: #fff;
     padding: 0 20px 0 20px;
+    width: 350px;
     border-radius: 5px;
     box-shadow: 0 0 20px 0 #35414c;
     font-family:  JetBrains Mono, monospace;
 }
 
+.zaxis {
+    display: block;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1;
+}
+
 .mapboxgl-ctrl-logo {
     display: none !important;
+}
+
+.mapboxgl-ctrl-scale {
+    background-color: transparent; /* Background color */
+    text-align: center;
+    color: #ffffff; /* Text color */
+    font-size: 10px; /* Font size */
+    padding: 5px; /* Padding */
+    height: 2px;
+    border-left: 1px solid #ffffff; /* Border */
+    border-right: 1px solid #ffffff; /* Border */
+    border-bottom: 1px solid #ffffff; /* Border */
 }
 
 /* Add a media query for screens smaller than 768px (tablets and mobile) */
@@ -483,25 +585,18 @@ footer {
                         </select>
                     </div>
                 </form>
-                <div class="fly-buttons">
-                    <h4 class="city">You can also fly to other cities...</h4>
-                    <button id="tbilisi" class="fly-button">Tbilisi</button>
-                    <button id="batumi" class="fly-button">Batumi</button>
-                    <button id="kutaisi" class="fly-button">Kutaisi</button>
-                    <button id="zugdidi" class="fly-button">Zugdidi</button><br />
-                    <button id="gori" class="fly-button">Gori</button>
-                    <button id="poti" class="fly-button">Poti</button>
-                    <button id="sokhumi" class="fly-button">Sokhumi</button>
-                    <button id="akhaltsikhe" class="fly-button">Akhaltsikhe</button>
-                </div>
             </div>
-            <div class="details">
-                <p class="details">NOTE: Use only desktop web browser to enjoy full functionality</p>
+            <div class="intro">
+                <span style="background-color: black; color: yellow; padding: 5px; margin-left: 10px;"><strong>DIVERSITY</strong></span>
+                <p class="intro">The tool calculates how diverse the urban land use is within the selected isochrone area. The calculation is based on Shannon's Diversity Index approach. See more about it <a class="index" href="https://en.wikipedia.org/wiki/Diversity_index">here.</a></p>
+            </div> 
+            <div id="note">
+                <p class="note">NOTE: Use desktop web browser for full functionality</p>
             </div>    
         </div>
-        <div class="heading"><h1>URBANYX<span style="font-size: 15px">v0.1 [beta]</span><br>
-            <img src="https://zaxis.ge/wp-content/uploads/2021/10/transparent-white-logo-1.png" alt="" width="75" height="20"></h1>
-        </div>        
+        <div class="heading"><p class="beta">v0.1 [beta]</p>
+            <h1>URBANYX</h1>
+        </div>       
         <footer>
             <p class="footer">Built using <a href="http://mapbox.com/about/maps">
                 <svg viewBox="0 0 81 20" style="width: 81px; height: 20px; vertical-align: middle;">
@@ -510,8 +605,20 @@ footer {
                     </path></svg></a>
                     <span class="footer">| Data by OpenStreetMap | Original map style by Amy Lee Walton</span>
                 </p>
+                <div class="zaxis"><a href="https://zaxis.ge"><img src="https://zaxis.ge/wp-content/uploads/2021/10/transparent-white-logo-1.png" alt="" width="75" height="20"></a></div>
             </footer>
             <div id="map" class="map">
+                <div class="fly-buttons-container">
+                    <!--<h4 class="city">You can also fly to other cities...</h4>-->
+                    <button id="tbilisi" class="fly-button">Tbilisi</button>
+                    <button id="batumi" class="fly-button">Batumi</button>
+                    <button id="kutaisi" class="fly-button">Kutaisi</button>
+                    <button id="zugdidi" class="fly-button">Zugdidi</button>
+                    <button id="gori" class="fly-button">Gori</button>
+                    <button id="poti" class="fly-button">Poti</button>
+                    <button id="sokhumi" class="fly-button">Sokhumi</button>
+                    <button id="akhaltsikhe" class="fly-button">Akhaltsikhe</button>
+                </div>
                 <div id="legend" class="legend"></div>
                 <div id="legend-title"></div>
                 <div id="tooltip" class="tooltip"></div>
