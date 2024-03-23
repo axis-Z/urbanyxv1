@@ -273,7 +273,7 @@
                 shannonLegendItem.innerHTML = "<strong><span class='innerhtml' style='color: yellow; background-color: black'>Diversity: " + shannonIndex.toFixed(2) + "</strong></span>";
                 legend.appendChild(shannonLegendItem);
             }
-
+                 
             // Add total point count to the legend
             //legend.innerHTML += "<p><strong>Total:</strong> " + totalCount + "</p>";
 
@@ -386,7 +386,7 @@ map.on("load", function () {
             "#cccccc" // Default color for all other categories
         ],
     },
-}); 
+});
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -439,43 +439,4 @@ document.addEventListener("DOMContentLoaded", function () {
 map.on('click', 'featuresWithinIsochrone-layer', function (e) {
     var feature = e.features[0];
     console.log('Clicked feature properties:', feature.properties);
-});
-
-function calculateZoningAreasWithinIsochrone(zoningPolygons, isochronePolygons) {
-    var areasByZone = {};
-
-    // Iterate over each unique zone value
-    var uniqueZones = new Set(zoningPolygons.features.map(feature => feature.properties.zona));
-    uniqueZones.forEach(zona => {
-        // Filter zoning polygons dataset to include only polygons with the current zone value
-        var zoningPolygonsFiltered = turf.featureCollection(zoningPolygons.features.filter(feature => feature.properties.zona === zona));
-        
-        // Calculate the area of the filtered polygons within the isochrones
-        var totalArea = 0;
-        zoningPolygonsFiltered.features.forEach(function (zoningFeature) {
-            isochronePolygons.features.forEach(function (isochroneFeature) {
-                var intersection = turf.intersect(zoningFeature.geometry, isochroneFeature.geometry);
-                if (intersection) {
-                    // Calculate the area of the intersected region and add it to the total area
-                    var area = turf.area(intersection);
-                    totalArea += area;
-                }
-            });
-        });
-
-        // Convert the total area to square footage if needed
-        // 1 square meter = 10.7639 square feet
-        var totalAreaInSquareFeet = totalArea * 10.7639;
-
-        // Store the total area for the current zone
-        areasByZone[zona] = totalAreaInSquareFeet;
-    });
-
-    return areasByZone;
-}
-
-// Call this function after generating the isochrone and loading the zoning polygons data
-var zoningPolygons = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/zoning-tbilisi.geojson"; // Load zoning polygons GeoJSON data
-var isochronePolygons = map.getSource("isochrone")._data; // Get isochrone GeoJSON data from the map
-var areasByZone = calculateZoningAreasWithinIsochrone(zoningPolygons, isochronePolygons);
-console.log('Areas by zone within isochrone:', areasByZone);
+})

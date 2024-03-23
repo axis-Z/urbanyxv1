@@ -444,6 +444,14 @@ footer {
     -moz-appearance: none;
 }
 
+#sidebar-content {
+    position: absolute;
+    background-color: transparent;
+    padding: 20px;
+    overflow-y: auto;
+    z-index: 1;
+}
+
 .innerhtml {
     padding: 2.5px 5px 2.5px 5px;
 }
@@ -589,7 +597,8 @@ footer {
             <div class="intro">
                 <span style="background-color: black; color: yellow; padding: 5px; margin-left: 10px;"><strong>DIVERSITY</strong></span>
                 <p class="intro">The tool calculates how diverse the urban land use is within the selected isochrone area. The calculation is based on Shannon's Diversity Index approach. See more about it <a class="index" href="https://en.wikipedia.org/wiki/Diversity_index">here.</a></p>
-            </div> 
+            </div>
+            <div id="sidebar-content"></div> 
             <div id="note">
                 <p class="note">NOTE: Use desktop web browser for full functionality</p>
             </div>    
@@ -624,7 +633,7 @@ footer {
                 <div id="tooltip" class="tooltip"></div>
             </div>
         </div>
-        <script src="./main.js"></script>
+        <script src="./main-1.js"></script>
         <script src="./tooltip.js"></script>
         <script src="./fly-to-location.js"></script>
     
