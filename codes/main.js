@@ -208,6 +208,7 @@
                 "cafe":"#33a02c", // Color for cafe
                 "restaurant":"#ff7f00", // Color for restaurant
                 "nightclub":"#984ea3", // Color for nightclub
+                "fast_food":"#ffeda0", // Color for nightclub
                 "clinic": "#a6cee3", // Color for clinic
                 "dentist": "#cab2d6", // Color for dentist
                 "hospital": "#fb9a99", // Color for hospital
@@ -273,7 +274,7 @@
                 shannonLegendItem.innerHTML = "<strong><span class='innerhtml' style='color: yellow; background-color: black'>Diversity: " + shannonIndex.toFixed(2) + "</strong></span>";
                 legend.appendChild(shannonLegendItem);
             }
-                 
+
             // Add total point count to the legend
             //legend.innerHTML += "<p><strong>Total:</strong> " + totalCount + "</p>";
 
@@ -358,6 +359,7 @@ map.on("load", function () {
             "cafe","#33a02c", // Color for cafe
             "restaurant","#ff7f00", // Color for restaurant
             "nightclub","#984ea3", // Color for nightclub
+            "fast_food","#ffeda0", // Color for fastfood
             "clinic","#a6cee3", // Color for clinics        
             "dentist","#cab2d6", // Color for dentist            
             "hospital","#fb9a99", // Color for hospitals   
