@@ -193,7 +193,7 @@
 
             // Update legend title based on selected data source
             var legendTitle = document.getElementById("legend-title");
-            legendTitle.innerHTML = "<p>" + "<strong> <span class='innerhtml' style='color: yellow; background-color: black'>" + totalCount + "</strong></span>" + (selectedDataSourceDisplayName || selectedDataSource.toUpperCase()) + " within " + "<strong> <span class='innerhtml' style='color: yellow; background-color: black'>" + contours_minutes + " minutes " + profile + "</span></strong> distance</p>";
+            legendTitle.innerHTML = "<p>" + "<strong> <span class='innerhtml' style='color: yellow; background-color: black;'>" + totalCount + "</strong></span>" + (selectedDataSourceDisplayName || selectedDataSource.toUpperCase()) + " within " + "<strong> <span class='innerhtml' style='color: yellow; background-color: black'>" + contours_minutes + " minutes " + profile + "</span></strong> distance</p>";
 
             // Clear the legend before updating it with new items
             var legend = document.getElementById("legend");
@@ -208,7 +208,7 @@
                 "cafe":"#33a02c", // Color for cafe
                 "restaurant":"#ff7f00", // Color for restaurant
                 "nightclub":"#984ea3", // Color for nightclub
-                "fast_food":"#ffeda0", // Color for nightclub
+                "fast_food":"#dfff00", // Color for fastfood
                 "clinic": "#a6cee3", // Color for clinic
                 "dentist": "#cab2d6", // Color for dentist
                 "hospital": "#fb9a99", // Color for hospital
@@ -271,7 +271,7 @@
             // Add Shannon Diversity Index to the legend if the car-crash layer is not active
             if (!isCarCrashLayerActive) {
                 var shannonLegendItem = document.createElement("p");
-                shannonLegendItem.innerHTML = "<strong><span class='innerhtml' style='color: yellow; background-color: black'>Diversity: " + shannonIndex.toFixed(2) + "</strong></span>";
+                shannonLegendItem.innerHTML = "<strong><span class='innerhtml' style='color: white; font-size: 11px; background: #810f7c; border: .5px solid white; padding: 5px;'>Diversity Score: " + shannonIndex.toFixed(2) + "</strong></span>";
                 legend.appendChild(shannonLegendItem);
             }
 
@@ -359,7 +359,7 @@ map.on("load", function () {
             "cafe","#33a02c", // Color for cafe
             "restaurant","#ff7f00", // Color for restaurant
             "nightclub","#984ea3", // Color for nightclub
-            "fast_food","#ffeda0", // Color for fastfood
+            "fast_food","#dfff00", // Color for fastfood
             "clinic","#a6cee3", // Color for clinics        
             "dentist","#cab2d6", // Color for dentist            
             "hospital","#fb9a99", // Color for hospitals   
