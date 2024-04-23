@@ -99,6 +99,55 @@
                 }
             }); // Adjust padding as needed
 
+
+                
+                // Inside the function generateIsochrone after fetching and setting the isochrone data
+                map.once("idle", function () {
+                                
+                    // Fetch RWI data
+                    fetch('/Users/giorgikankia/Documents/GitHub/urbanyxv1/data/relative_wealth_georgia.geojson')
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(relativeWealthData) {
+                                    
+                        // Filter population data within isochrone boundary
+                        var relativeWealthWithinIsochrone = {
+                            type: "FeatureCollection",
+                            features: relativeWealthData.features.filter(function (feature) {   
+                                return turf.booleanPointInPolygon(          
+                                    turf.point(feature.geometry.coordinates),    
+                                    data.features[0]     
+                                    );   
+                                })
+                            };
+                                    
+                            // Calculate average based on population data column
+                            var totalRelativeWealth = relativeWealthWithinIsochrone.features.reduce(function (accumulator, feature) {
+                                return accumulator + feature.properties.rwi;
+                            }, 0);
+                            var averageRelativeWealth = totalRelativeWealth / relativeWealthWithinIsochrone.features.length;
+                                    
+                            // Update legend with average population   
+                            updateLegend(averageRelativeWealth);  
+                        })
+                            
+                                
+                        .catch(function(error) {      
+                            console.error('Error loading rwi data:', error);    
+                        });  
+                    });
+                            
+                    // Function to Update Legend with Average Population
+                    function updateLegend(averageRelativeWealth) {
+                                
+                        // Find the legend element by its ID
+                        var legend = document.getElementById("legend");
+                             
+                        // Update the legend with the average population   
+                        legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='color: white; font-size: 11px; background: #810f7c; border: .5px solid white; padding: 5px;'>Relative Wealth: " + averageRelativeWealth.toFixed(2) + "</strong></p>";
+                    }                            
+
             // Mapping between data source values and display names
             var dataSourceDisplayNames = {
                 "pois-leisure": " leisure spots",
