@@ -99,13 +99,57 @@
                 }
             }); // Adjust padding as needed
 
+            // Inside the function generateIsochrone after fetching and setting the isochrone data
+            map.once("idle", function () {
+    
+                // Fetch population data
+                fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/tbs_pop_grid.geojson')
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(populationData) {
+            
+                    // Filter population data within isochrone boundary
+                    var populationWithinIsochrone = {
+                        type: "FeatureCollection",
+                        features: populationData.features.filter(function (feature) {
+                            return turf.booleanPointInPolygon(
+                                turf.point(feature.geometry.coordinates),
+                                data.features[0]
+                                );
+                            })
+                        };
+            
+                        // Calculate sum based on population data column
+                        var populationSum = populationWithinIsochrone.features.reduce(function (accumulator, feature) {
+                            return accumulator + feature.properties.POP_SQ_KM;
+                        }, 0);
+            
+                        // Update legend with population sum
+                        updateLegend(populationSum);
+                    })
+        
+                    .catch(function(error) {
+                        console.error('Error loading population data:', error);
+                    });
+                });
+
+                // Function to Update Legend with Population Sum
+                function updateLegend(populationSum) {
+    
+                    // Find the legend element by its ID
+                    var legend = document.getElementById("legend");
+
+                    // Update the legend with the population sum
+                    legend.innerHTML += "<strong><span class='innerhtml' style='color: white; font-size: 11px; background: #810f7c; border: .5px solid white; padding: 5px;'>Population: " + populationSum + "</strong></p>";
+                }
 
                 
                 // Inside the function generateIsochrone after fetching and setting the isochrone data
                 map.once("idle", function () {
                                 
                     // Fetch RWI data
-                    fetch('/Users/giorgikankia/Documents/GitHub/urbanyxv1/data/relative_wealth_georgia.geojson')
+                    fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/relative_wealth_georgia.geojson')
                     .then(function(response) {
                         return response.json();
                     })
