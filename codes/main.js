@@ -149,20 +149,9 @@
             
                     // Calculate average relative wealth index
                     var totalRelativeWealth = relativeWealthWithinIsochrone.features.reduce(function (accumulator, feature) {
-                        return accumulator + feature.properties.rwi;
+                        return accumulator + feature.properties.RWI;
                     }, 0);
-
-
-                    // Calculate average relative wealth index
-        var totalRelativeWealth = 0;
-        var totalCount = relativeWealthWithinIsochrone.features.length;
-        relativeWealthWithinIsochrone.features.forEach(function (feature) {
-            var relativeWealth = feature.properties.rwi;
-            totalRelativeWealth += relativeWealth;
-        });
-
-        var averageRelativeWealth = totalCount > 0 ? totalRelativeWealth / totalCount : 0;
-
+                    var averageRelativeWealth = totalRelativeWealth / relativeWealthWithinIsochrone.features.length;
             
                     // Update legend with average relative wealth index
                     updateRelativeWealthLegend(averageRelativeWealth);
@@ -188,7 +177,7 @@
                 var legend = document.getElementById("legend");
             
                 // Append a new legend item for the average relative wealth index
-                legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='color: white; font-size: 11px; background: #810f7c; border: .5px solid white; padding: 5px;'>Average Relative Wealth Index: " + averageRelativeWealth.toFixed(2) + "</strong></p>";
+                legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='color: white; font-size: 11px; background: #810f7c; border: .5px solid white; padding: 5px;'>Wealth index: " + averageRelativeWealth.toFixed(2) + "</strong></p>";
             }
             
                                                
@@ -201,7 +190,8 @@
                 "pois-bank": " bank offices",
                 "pois-atm": " ATMs",
                 "pois-payment": " payment kiosks",
-                "car-crashes": " car crashes recorded"
+                "car-crashes": " car crashes recorded",
+                "celltowers": " cell towers located",
             };
 
             // Fetch point features from selected data source
@@ -221,6 +211,8 @@
                 dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-payment_terminal.geojson";
             } else if (selectedDataSource === "car-crashes") {
                 dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/car_crashes.geojson";
+            } else if (selectedDataSource === "celltowers") {
+                dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/cell_towers.geojson";
             }
 
             if (dataUrl) {
@@ -314,17 +306,20 @@
                 "Bank of Georgia": "#ff610f", // Color for Bank of Georgia
                 "TBC Bank": "#00a3e0", // Color for TBC Bank 
                 "Liberty": "#db2211", // Color for Liberty Bank
-                "BasisBank": "#1d91c0",
-                "Cartu Bank":"#ffeda0",
-                "Credo Bank":"#6a51a3",
-                "Crystal":"#f768a1",
-                "Halyk Bank":"#74c476",
-                "IsBank":"#9ecae1",
-                "ProCredit Bank":"#fb9a99",
-                "Terabank":"#9F1D6C",
-                "Ziraat Bank":"#f781bf",
-                "soft":"#4d9221",
-                "injury":"#c51b7d",
+                "BasisBank": "#1d91c0", // Color for BasisBank
+                "Cartu Bank":"#ffeda0", // Color for Cartu Bank
+                "Credo Bank":"#6a51a3", // Color for Credo Bank
+                "Crystal":"#f768a1", // Color for Crystal
+                "Halyk Bank":"#74c476", // Color for Halyk Bank
+                "IsBank":"#9ecae1", // Color for IsBank
+                "ProCredit Bank":"#fb9a99", // Color for ProCredit Bank
+                "Terabank":"#9F1D6C", // Color for TeraBank
+                "Ziraat Bank":"#f781bf", // Color for Ziraat Bank
+                "soft":"#4d9221", // Color for soft car crashes
+                "injury":"#c51b7d", // Color for serious car crashes resulting in injuries
+                "GSM":"#2b8cbe", // Color for GSM (2G)
+                "UMTS":"#feb24c", // Color for UMTS (3G)
+                "LTE":"#dd1c77", // Color for LTE (4G)
             };
 
             // Function to get color based on category
@@ -476,6 +471,9 @@ map.on("load", function () {
             "Ziraat Bank","#f781bf",
             "soft","#4d9221",
             "injury","#c51b7d",
+            "GSM (2G)","#2b8cbe", // Color for GSM (2G)
+            "UMTS (3G)","#feb24c", // Color for UMTS (3G)
+            "LTE (4G)","#dd1c77", // Color for LTE (4G)
             // Add more explicitly stated categories and colors as needed
             // If category is not explicitly stated, assign a default color
             // The last value in the paint expression will act as the default color
