@@ -317,9 +317,9 @@
                 "Ziraat Bank":"#f781bf", // Color for Ziraat Bank
                 "soft":"#4d9221", // Color for soft car crashes
                 "injury":"#c51b7d", // Color for serious car crashes resulting in injuries
-                "GSM":"#2b8cbe", // Color for GSM (2G)
-                "UMTS":"#feb24c", // Color for UMTS (3G)
-                "LTE":"#dd1c77", // Color for LTE (4G)
+                "GSM (2G)":"#2b8cbe", // Color for GSM (2G)
+                "UMTS (3G)":"#feb24c", // Color for UMTS (3G)
+                "LTE (4G)":"#dd1c77", // Color for LTE (4G)
             };
 
             // Function to get color based on category
