@@ -108,7 +108,6 @@
                     left: 90
                 }
             }); // Adjust padding as needed
-
             map.once("idle", function () {
                 // Fetch population data
                 fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/tbs_pop_grid.geojson')
@@ -170,29 +169,51 @@
                 .catch(function(error) {
                     console.error('Error loading relative wealth index data:', error);
                 });
+            
+                // Check if cell tower dataset is active
+                if (selectedDataSource === "cell-tower") {
+                    // Fetch avg internet speed data
+                    fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/fixed_internet_georgia.geojson')
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(internetSpeedData) {
+                        // Filter internet speed data within isochrone boundary
+                        var internetSpeedWithinIsochrone = {
+                            type: "FeatureCollection",
+                            features: internetSpeedData.features.filter(function (feature) {
+                                return turf.booleanPointInPolygon(
+                                    turf.point(feature.geometry.coordinates),
+                                    data.features[0]
+                                    );
+                                })
+                            };
+            
+                        // Calculate average internet speed
+                        var totalInternetSpeed = internetSpeedWithinIsochrone.features.reduce(function (accumulator, feature) {
+                            return accumulator + feature.properties.u_mbps_20;
+                        }, 0);
+                        var averageInternetSpeed = totalInternetSpeed / internetSpeedWithinIsochrone.features.length;
+            
+                        // Update legend with average internet speed
+                        updateInternetSpeedLegend(averageInternetSpeed);
+                    })
+            
+                    .catch(function(error) {
+                        console.error('Error loading average internet speed data:', error);
+                    });
+                }
             });
-
             
-            
-            // Function to Update Legend with Population Sum
-            function updatePopulationLegend(populationSum) {
+            // Function to Update Legend with Average Internet Speed
+            function updateInternetSpeedLegend(averageInternetSpeed) {
                 // Find the legend element by its ID
                 var legend = document.getElementById("legend");
             
-                // Update the legend with the population sum
-                legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Estimated population</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + populationSum + "</p>";
-            }
-            
-            // Function to Update Legend with Average Relative Wealth Index
-            function updateRelativeWealthLegend(averageRelativeWealth) {
-                // Find the legend element by its ID
-                var legend = document.getElementById("legend");
-            
-                // Append a new legend item for the average relative wealth index
-                legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Wealth index</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + averageRelativeWealth.toFixed(2) + "</p>";
-            }
+                // Append a new legend item for the average internet speed
+                legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Average Internet Speed</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + averageInternetSpeed.toFixed(2) + "</p>";
+            }            
                                          
-
             // Mapping between data source values and display names
             var dataSourceDisplayNames = {
                 "pois-leisure": " leisure spots",
