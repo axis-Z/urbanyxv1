@@ -88,7 +88,7 @@ p.beta {
     display: flex;
     align-items: center;
     margin-bottom: 0;
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .symbol, .text {
@@ -148,7 +148,7 @@ gets 2/3 of the page. You can adjust this to your personal liking. */
 
 h4.travel-mode {
     font-family: JetBrains Mono, monospace;
-    font-size: .75rem;
+    font-size: 14px;
     font-weight: bold;
     margin-bottom: 6px;
 }
@@ -163,7 +163,7 @@ h4.city {
 .intro {
     text-align: justify;
     font-family: JetBrains Mono, monospace;
-    font-size: 0.75rem;
+    font-size: 14px;
     font-weight: 300;
     margin: 20px 10px 20px 10px;
 }
@@ -182,7 +182,7 @@ a.index:hover {
 
 .details {
     font-family: JetBrains Mono, monospace;
-    font-size: 0.75rem;
+    font-size: 14px;
     font-weight: 400;
     padding: 10px;
 }
@@ -235,7 +235,7 @@ input[type="radio"] {
 #contours {
     display: inline-block;
     font-family: JetBrains Mono, monospace;
-    font-size: 1rem;
+    font-size: 14px;
     font-weight: bold;
     margin: 0 0 6px 0;
 }
@@ -243,7 +243,7 @@ input[type="radio"] {
 #data-source {
     display: inline-block;
     font-family: JetBrains Mono, monospace;
-    font-size: 1rem;
+    font-size: 14px;
     font-weight: bold;
     margin: 0 0 6px 0;
 }
@@ -254,7 +254,7 @@ input[type="radio"] {
     display: inline-block;
     width: 15%;
     height: 30px;
-    font-size: 15px;
+    font-size: 14px;
     border: thin solid rgb(194, 194, 247);    
     border-radius: 2px;
     box-shadow: 0 0 20px 0 #e3f0fc;
@@ -290,7 +290,7 @@ option  {
     display: inline-block;
     width: 30%;
     height: 30px;
-    font-size: 15px;
+    font-size: 14px;
     border: thin solid rgb(194, 194, 247);    
     border-radius: 2px;
     box-shadow: 0 0 20px 0 #e3f0fc;
@@ -380,7 +380,7 @@ option  {
 }
 
 #note {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
     height: 5%;
@@ -389,6 +389,8 @@ option  {
     padding: 10px;
     border-top: 1.2px solid rgb(110, 136, 209);
     color: rgb(108, 134, 207);
+    z-index: 2;
+    background-color: #ffffff;
 }
 
 .note {
@@ -410,6 +412,7 @@ footer {
     background: rgb(108, 134, 207);
     color: white;
     border-top: 1.2px solid white;
+    z-index: 3;
 }
 
 .footer {
@@ -423,20 +426,21 @@ footer {
 #legend {
     display: none;
     position: absolute;
-    bottom: 50px;
+    /*bottom: 50px;*/
     left: 10px;
-    color:rgba(255, 255, 255, 0.9);
+    color:rgba(40, 39, 39, 0.9);
     font-family:  JetBrains Mono, monospace;
-    font-size: 15px;
-    background: rgba(108, 134, 207, 0.75);
+    font-size: 14px;
+    /*background: rgba(108, 134, 207, 0.75);
     /*width: 250px;*/
-    margin: 0 0 0 0;
-    padding: 0 20px 10px 20px;
-    box-shadow: 0 0 20px 0 #35414c;
+    margin: 0;
+    padding: 0 20px 50px 20px;
+    /*box-shadow: 0 0 20px 0 #35414c;
     /*border-top: 1.2px solid white;
     border-left: 1.2px solid white;*/
-    border-radius: 5px;
-    z-index: 1000;
+    /*border-radius: 5px;*/
+    overflow: auto;
+    z-index: 1;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -473,11 +477,11 @@ footer {
 
 .legend-circle {
     display: inline-block;
-    width: 10px;
-    height: 10px;
+    width: 15px;
+    height: 15px;
     border: 1.2px solid #ffffff;
     border-radius: 50%;
-    margin-right: 5px;
+    margin-right: 10px;
 }
 
 .tooltip {
@@ -571,7 +575,7 @@ footer {
                         </label>
                     </div>
                     <div>
-                        <h4 id="contours" class="txt-m txt-bold mb6" style="font-size: 0.75rem;">Travel Time (min.)</h4>
+                        <h4 id="contours" class="txt-m txt-bold mb6" style="font-size: 14px;">Travel Time (min.)</h4>
                         <select id="contours_minutes">
                             <option value="15">15</option>
                             <option value="30">30</option>
@@ -581,7 +585,7 @@ footer {
                     </div>
                     <br>
                     <div>
-                        <h4 id="data-source" style="font-size: 0.75rem;">Data Source</h4>
+                        <h4 id="data-source" style="font-size: 14px;">Data Source</h4>
                         <select id="data_source">
                             <option value="pois-leisure">Leisure</option>
                             <option value="pois-health">Healthcare</option>
@@ -596,9 +600,9 @@ footer {
                 </form>
             </div>
             <div class="intro">
-                <span style="background-color: #6c86cf; color: white; border: 1px solid black; padding: 5px; margin-left: 10px;"><strong>DIVERSITY SCORE</strong></span>
-                <p class="intro">Curious how diverse the urban built environment is? See more about Shannon's Diversity Index <a class="index" href="https://en.wikipedia.org/wiki/Diversity_index">here.</a></p>
-            </div>
+                <!-- <span style="background-color: #6c86cf; color: white; border: 1px solid black; padding: 5px; margin-left: 10px;"><strong>DIVERSITY SCORE</strong></span>
+                <p class="intro">Curious how diverse the urban built environment is? See more about Shannon's Diversity Index <a class="index" href="https://en.wikipedia.org/wiki/Diversity_index">here.</a></p>-->
+                <div id="legend" class="legend"></div></div>
             
             <div id="sidebar-content"></div> 
             <div id="note">

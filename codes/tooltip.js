@@ -8,27 +8,34 @@ map.on('mousemove', 'featuresWithinIsochrone-layer', function (e) {
         // Populate tooltip with information from the hovered feature
         var tooltipContent = '';
 
-        // Check if the hovered feature belongs to the car-crashes dataset
-        if (hoveredFeature.properties.hasOwnProperty('amenity') && (hoveredFeature.properties.amenity === 'soft' || hoveredFeature.properties.amenity === 'injury')) {
-            var date = hoveredFeature.properties.date || 'N/A';
-            var amenity = hoveredFeature.properties.amenity || 'N/A';
-            tooltipContent = '<p><strong>Date:</strong> ' + date + '</p>' +
-                             '<p><strong>Crash Severity:</strong> ' + amenity + '</p>';
-        } else {
-            var address = hoveredFeature.properties['addr:street'] || '';
-            var housenumber = hoveredFeature.properties['addr:housenumber'] || '';
-            var name = hoveredFeature.properties.name || 'N/A';
-            var opening_hours = hoveredFeature.properties.opening_hours || 'N/A';
-            var phone = hoveredFeature.properties.phone || 'N/A';
-            var website = hoveredFeature.properties.website || 'N/A';
-            var fullAddress = (address || housenumber) ? ((address || '') + ' ' + (housenumber || '')) : 'N/A';
+// Check if the hovered feature belongs to the car-crashes dataset
+if (hoveredFeature.properties.hasOwnProperty('amenity') && (hoveredFeature.properties.amenity === 'soft' || hoveredFeature.properties.amenity === 'injury')) {
+    var date = hoveredFeature.properties.date || 'N/A';
+    var amenity = hoveredFeature.properties.amenity || 'N/A';
+    tooltipContent = '<p><strong>Date:</strong> ' + date + '</p>' +
+                     '<p><strong>Crash Severity:</strong> ' + amenity + '</p>';
+} else if (hoveredFeature.properties.hasOwnProperty('amenity') && (hoveredFeature.properties.amenity === 'GSM (2G)' || hoveredFeature.properties.amenity === 'UMTS (3G)' || hoveredFeature.properties.amenity === 'LTE (4G)')) {
+    var amenity = hoveredFeature.properties.amenity || 'N/A';
+    var range = hoveredFeature.properties.range || 'N/A';
+    tooltipContent = '<p><strong>Technology:</strong> ' + amenity + '</p>' +
+                     '<p><strong>Range (m):</strong> ' + range + '</p>';
 
-            tooltipContent = '<h3>' + name + '</h3>' +
-                             '<p><strong>Address:</strong> ' + fullAddress + '</p>' + 
-                             '<p><strong>Opening Hours:</strong> ' + opening_hours + '</p>' + 
-                             '<p><strong>Contact:</strong> ' + phone + '</p>' + 
-                             '<p><strong>Web:</strong> ' + website + '</p>';
-        }
+} else {
+    var address = hoveredFeature.properties['addr:street'] || '';
+    var housenumber = hoveredFeature.properties['addr:housenumber'] || '';
+    var name = hoveredFeature.properties.name || 'N/A';
+    var opening_hours = hoveredFeature.properties.opening_hours || 'N/A';
+    var phone = hoveredFeature.properties.phone || 'N/A';
+    var website = hoveredFeature.properties.website || 'N/A';
+    var fullAddress = (address || housenumber) ? ((address || '') + ' ' + (housenumber || '')) : 'N/A';
+
+    tooltipContent = '<h3>' + name + '</h3>' +
+                     '<p><strong>Address:</strong> ' + fullAddress + '</p>' + 
+                     '<p><strong>Opening Hours:</strong> ' + opening_hours + '</p>' + 
+                     '<p><strong>Contact:</strong> ' + phone + '</p>' + 
+                     '<p><strong>Web:</strong> ' + website + '</p>';
+}
+
 
         // Update tooltip content
         var tooltip = document.getElementById('tooltip');

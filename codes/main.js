@@ -1,4 +1,3 @@
-       
        mapboxgl.accessToken = "pk.eyJ1Ijoiam9yam9uZTkwIiwiYSI6ImNrZ3R6M2FvdTBwbmwycXBibGRqM2w2enYifQ.BxjvFSGqefuC9yFCrXC-nQ";
        var map = new mapboxgl.Map({
             container: "map",
@@ -31,6 +30,17 @@
                 button.classList.add('selected');
             });
         });
+
+                // Add event listener to select dropdown for data source
+                var dataSourceSelect = document.getElementById("data_source");
+                dataSourceSelect.addEventListener("change", function () {
+            
+                    // Get the clicked coordinates
+                    var lngLat = marker ? marker.getLngLat() : map.getCenter();
+        
+                    // Call function to generate isochrone
+                    generateIsochrone(lngLat);
+                });
 
         var marker;
         map.on("click", function (e) {
@@ -161,6 +171,8 @@
                     console.error('Error loading relative wealth index data:', error);
                 });
             });
+
+            
             
             // Function to Update Legend with Population Sum
             function updatePopulationLegend(populationSum) {
@@ -168,7 +180,7 @@
                 var legend = document.getElementById("legend");
             
                 // Update the legend with the population sum
-                legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='color: white; font-size: 11px; background: #810f7c; border: .5px solid white; padding: 5px;'>Population: " + populationSum + "</strong></p>";
+                legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Estimated population</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + populationSum + "</p>";
             }
             
             // Function to Update Legend with Average Relative Wealth Index
@@ -177,10 +189,9 @@
                 var legend = document.getElementById("legend");
             
                 // Append a new legend item for the average relative wealth index
-                legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='color: white; font-size: 11px; background: #810f7c; border: .5px solid white; padding: 5px;'>Wealth index: " + averageRelativeWealth.toFixed(2) + "</strong></p>";
+                legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Wealth index</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + averageRelativeWealth.toFixed(2) + "</p>";
             }
-            
-                                               
+                                         
 
             // Mapping between data source values and display names
             var dataSourceDisplayNames = {
@@ -329,6 +340,8 @@
 
             // Check if the car-crash layer is active
             var isCarCrashLayerActive = selectedDataSource === 'car-crashes';
+            var isCellTowerLayerActive = selectedDataSource === 'celltowers';
+
 
             // Iterate over each category and update legend
             for (var category in counts) {
@@ -351,16 +364,17 @@
                     counts[category];
 
                     // Append legend item to the legend only if the car-crash layer is not active
-                    if (!isCarCrashLayerActive || category !== 'Shannon diversity index') {
+                    if (!isCarCrashLayerActive && !isCellTowerLayerActive || category !== 'Shannon diversity index') {
                         legend.appendChild(legendItem);
                     }
+                    
                 }
             }
 
             // Add Shannon Diversity Index to the legend if the car-crash layer is not active
-            if (!isCarCrashLayerActive) {
+            if (!isCarCrashLayerActive && !isCellTowerLayerActive) {
                 var shannonLegendItem = document.createElement("p");
-                shannonLegendItem.innerHTML = "<strong><span class='innerhtml' style='color: white; font-size: 11px; background: #810f7c; border: .5px solid white; padding: 5px;'>Diversity Score: " + shannonIndex.toFixed(2) + "</strong></span>";
+                shannonLegendItem.innerHTML = "<strong><span class='innerhtml' style='font-size: 14px;'>Diversity</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + shannonIndex.toFixed(2) + "</strong></span>";
                 legend.appendChild(shannonLegendItem);
             }
 
@@ -511,17 +525,6 @@ document.addEventListener("DOMContentLoaded", function () {
         travelTimeSelect.addEventListener("change", function () {
             
             // Get the clicked coordinates    
-            var lngLat = marker ? marker.getLngLat() : map.getCenter();
-
-            // Call function to generate isochrone
-            generateIsochrone(lngLat);
-        });
-
-        // Add event listener to select dropdown for data source
-        var dataSourceSelect = document.getElementById("data_source");
-        dataSourceSelect.addEventListener("change", function () {
-    
-            // Get the clicked coordinates
             var lngLat = marker ? marker.getLngLat() : map.getCenter();
 
             // Call function to generate isochrone
