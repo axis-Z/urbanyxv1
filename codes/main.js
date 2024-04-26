@@ -102,10 +102,10 @@
                 //bearing: -35,
                 //pitch: 52,
                 padding: {
-                    top: 90, 
-                    right: 30, 
-                    bottom: 30, 
-                    left: 90
+                    top: 15, 
+                    right: 15, 
+                    bottom: 15, 
+                    left: 15
                 }
             }); // Adjust padding as needed
             map.once("idle", function () {
@@ -138,6 +138,15 @@
                 .catch(function(error) {
                     console.error('Error loading population data:', error);
                 });
+
+                            // Function to Update Legend with Population Sum
+            function updatePopulationLegend(populationSum) {
+                // Find the legend element by its ID
+                var legend = document.getElementById("legend");
+            
+                // Update the legend with the population sum
+                legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Estimated population</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + populationSum + "</p>";
+            }
             
                 // Fetch relative wealth index data
                 fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/relative_wealth_georgia.geojson')
@@ -169,9 +178,18 @@
                 .catch(function(error) {
                     console.error('Error loading relative wealth index data:', error);
                 });
+
+                // Function to Update Legend with Average Relative Wealth Index
+            function updateRelativeWealthLegend(averageRelativeWealth) {
+                // Find the legend element by its ID
+                var legend = document.getElementById("legend");
+            
+                // Append a new legend item for the average relative wealth index
+                legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Wealth index</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + averageRelativeWealth.toFixed(2) + "</p>";
+            }
             
                 // Check if cell tower dataset is active
-                if (selectedDataSource === "cell-tower") {
+                if (selectedDataSource === "celltowers") {
                     // Fetch avg internet speed data
                     fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/fixed_internet_georgia.geojson')
                     .then(function(response) {
@@ -189,14 +207,24 @@
                                 })
                             };
             
-                        // Calculate average internet speed
-                        var totalInternetSpeed = internetSpeedWithinIsochrone.features.reduce(function (accumulator, feature) {
-                            return accumulator + feature.properties.u_mbps_20;
-                        }, 0);
-                        var averageInternetSpeed = totalInternetSpeed / internetSpeedWithinIsochrone.features.length;
-            
-                        // Update legend with average internet speed
-                        updateInternetSpeedLegend(averageInternetSpeed);
+                        // Calculate average internet speed, d_mpbs_20, and latency
+                        var totalUploadSpeed = 0;
+                        var totalDownloadSpeed = 0;
+                        var totalLatency = 0;
+                        
+                        internetSpeedWithinIsochrone.features.forEach(function (feature) {
+                            totalUploadSpeed += feature.properties.u_mbps_22;
+                            totalDownloadSpeed += feature.properties.d_mbps_22;
+                            totalLatency += feature.properties.lat_s_22;
+                        });
+                        
+                        var averageUploadSpeed = totalUploadSpeed / internetSpeedWithinIsochrone.features.length;
+                        var averageDownloadSpeed = totalDownloadSpeed / internetSpeedWithinIsochrone.features.length;
+                        var averageLatency = totalLatency / internetSpeedWithinIsochrone.features.length;
+                        
+                        // Update legend with average internet speed, d_mbps_20, and latency
+                        updateInternetSpeedLegend(averageUploadSpeed, averageDownloadSpeed, averageLatency);
+                    
                     })
             
                     .catch(function(error) {
@@ -205,14 +233,18 @@
                 }
             });
             
-            // Function to Update Legend with Average Internet Speed
-            function updateInternetSpeedLegend(averageInternetSpeed) {
+            // Function to Update Legend with Internet Speed
+            function updateInternetSpeedLegend(averageUploadSpeed, averageDownloadSpeed, averageLatency) {
+    
                 // Find the legend element by its ID
                 var legend = document.getElementById("legend");
-            
-                // Append a new legend item for the average internet speed
-                legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Average Internet Speed</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + averageInternetSpeed.toFixed(2) + "</p>";
-            }            
+
+                // Update the legend with the internet speed information
+                legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Fixed Internet Speed</strong></p>" + "<span class='innerhtml' style='font-size: 12px;'>average upload - mbps</p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + averageUploadSpeed.toFixed(2);
+                legend.innerHTML += "<p>"+ "<span class='innerhtml' style='font-size: 12px;'>average download - mbps</p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + averageDownloadSpeed.toFixed(2);
+                legend.innerHTML += "<p>"+ "<span class='innerhtml' style='font-size: 12px;'>average latency - ms</p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + averageLatency.toFixed(2);
+            }
+
                                          
             // Mapping between data source values and display names
             var dataSourceDisplayNames = {
