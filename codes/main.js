@@ -183,9 +183,21 @@
             function updateRelativeWealthLegend(averageRelativeWealth) {
                 // Find the legend element by its ID
                 var legend = document.getElementById("legend");
+
+                // Function to determine color based on value
+                function getColorForWealthIndex(value) {
+                    // Define color thresholds for upload speed
+                    if (value >= 1) {
+                        return { backgroundColor: '#78c679', fontColor: '#ffffff' };
+                    } else if (value >= 0.75) {
+                        return { backgroundColor: '#fd8d3c', fontColor: '#ffffff' };
+                    } else {
+                        return { backgroundColor: '#bd0026', fontColor: '#ffffff' };
+                    }
+                }
             
                 // Append a new legend item for the average relative wealth index
-                legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Wealth index</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + averageRelativeWealth.toFixed(2) + "</p>";
+                legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Wealth index</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 20px; color:" + getColorForWealthIndex(averageRelativeWealth).fontColor +"; background-color:" + getColorForWealthIndex(averageRelativeWealth).backgroundColor + ";'>" + averageRelativeWealth.toFixed(2) + "</p>";
             }
             
                 // Check if cell tower dataset is active
@@ -195,36 +207,56 @@
                     .then(function(response) {
                         return response.json();
                     })
-                    .then(function(internetSpeedData) {
+                    .then(function(fixedInternetSpeedData) {
                         // Filter internet speed data within isochrone boundary
                         var internetSpeedWithinIsochrone = {
                             type: "FeatureCollection",
-                            features: internetSpeedData.features.filter(function (feature) {
+                            features: fixedInternetSpeedData.features.filter(function (feature) {
                                 return turf.booleanPointInPolygon(
                                     turf.point(feature.geometry.coordinates),
                                     data.features[0]
                                     );
                                 })
                             };
-            
-                        // Calculate average internet speed, d_mpbs_20, and latency
-                        var totalUploadSpeed = 0;
-                        var totalDownloadSpeed = 0;
-                        var totalLatency = 0;
                         
-                        internetSpeedWithinIsochrone.features.forEach(function (feature) {
-                            totalUploadSpeed += feature.properties.u_mbps_22;
-                            totalDownloadSpeed += feature.properties.d_mbps_22;
-                            totalLatency += feature.properties.lat_s_22;
+                        // Function to calculate median
+                        function calculateMedian(data) {
+                            // Sort the data in ascending order
+                            data.sort(function(a, b) {
+                                return a - b;
+                            });
+
+                            var n = data.length;
+                            var medianIndex = Math.floor(n / 2);
+
+                            // If the dataset has an odd number of values
+                            if (n % 2 !==0) {
+                                return data[medianIndex];
+                            } else {
+                                // If the dataset has an even number of values
+                                var lowerMiddleValue = data[medianIndex - 1];
+                                var upperMiddleValue = data[medianIndex];
+                                return (lowerMiddleValue + upperMiddleValue) / 2;
+                            }
+                        }
+
+                        // Calculate median upload speed, download speed and latency
+                        var fixedUploadSpeed = [];
+                        var fixedDownloadSpeed = [];
+                        var fixedLatency = [];
+
+                        internetSpeedWithinIsochrone.features.forEach(function(feature) {
+                            fixedUploadSpeed.push(feature.properties.u_mbps_22);
+                            fixedDownloadSpeed.push(feature.properties.d_mbps_22);
+                            fixedLatency.push(feature.properties.lat_s_22);
                         });
-                        
-                        var averageUploadSpeed = totalUploadSpeed / internetSpeedWithinIsochrone.features.length;
-                        var averageDownloadSpeed = totalDownloadSpeed / internetSpeedWithinIsochrone.features.length;
-                        var averageLatency = totalLatency / internetSpeedWithinIsochrone.features.length;
-                        
-                        // Update legend with average internet speed, d_mbps_20, and latency
-                        updateInternetSpeedLegend(averageUploadSpeed, averageDownloadSpeed, averageLatency);
-                    
+
+                        var medianFixedUploadSpeed = calculateMedian(fixedUploadSpeed);
+                        var medianFixedDownloadSpeed = calculateMedian(fixedDownloadSpeed);
+                        var medianFixedLatency = calculateMedian(fixedLatency);
+
+                        // Update legend with median fixed internet upload speed, download speed, and latency
+                        updateInternetSpeedLegend(medianFixedUploadSpeed, medianFixedDownloadSpeed, medianFixedLatency)
                     })
             
                     .catch(function(error) {
@@ -234,16 +266,105 @@
             });
             
             // Function to Update Legend with Internet Speed
-            function updateInternetSpeedLegend(averageUploadSpeed, averageDownloadSpeed, averageLatency) {
+            function updateInternetSpeedLegend(medianFixedUploadSpeed, medianFixedDownloadSpeed, medianFixedLatency) {
     
                 // Find the legend element by its ID
                 var legend = document.getElementById("legend");
 
+                // Function to determine color based on value
+                function getColorForUploadSpeed(value) {
+                    // Define color thresholds for upload speed
+                    if (value >= 19) {
+                        return '#78c679';
+                    } else if (value >= 15) {
+                        return '#fd8d3c';
+                    } else {
+                        return '#bd0026';
+                    }
+                }
+
+                function getColorForDownloadSpeed(value) {
+                    // Define color thresholds for upload speed
+                    if (value >= 19) {
+                        return '#78c679';
+                    } else if (value >= 15) {
+                        return '#fd8d3c';
+                    } else {
+                        return '#bd0026';
+                    }
+                }
+
+                function getColorForLatency(value) {
+                    // Define color thresholds for upload speed
+                    if (value <= 5) {
+                        return '#78c679';
+                    } else if (value <= 8) {
+                        return '#fd8d3c';
+                    } else {
+                        return '#bd0026';
+                    }
+                }
+
+                // Function to get arrow icon based on change in value
+                function getArrowIcon(change) {
+                    // Define color thresholds for change
+                    if (change > 0) {
+                        return '▲'; // Up arrow
+                    } else if (change < 0) {
+                        return '▼'; // Down arrow
+                    } else {
+                        return ''; // No change
+                    }
+                }
+
                 // Update the legend with the internet speed information
-                legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Fixed Internet Speed</strong></p>" + "<span class='innerhtml' style='font-size: 12px;'>average upload - mbps</p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + averageUploadSpeed.toFixed(2);
-                legend.innerHTML += "<p>"+ "<span class='innerhtml' style='font-size: 12px;'>average download - mbps</p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + averageDownloadSpeed.toFixed(2);
-                legend.innerHTML += "<p>"+ "<span class='innerhtml' style='font-size: 12px;'>average latency - ms</p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + averageLatency.toFixed(2);
+                legend.innerHTML += "<p class='legend-subhead'>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Fixed Internet Speed</strong>" + " <span class='innerhtml' style='font-size: 12px; color: #969696;'>(National & Tbilisi)</span></p>" + "<span class='innerhtml' style='font-size: 12px;'>median upload - mbps</p>" + "<span class='innerhtml' style='font-size: 20px; color:"  + getColorForUploadSpeed(medianFixedUploadSpeed) + ";'>" + medianFixedUploadSpeed.toFixed(2) + " <span class='innerhtml' style='font-size: 12px; color: #969696;'>(19.48 & 27.20)</span>";
+                legend.innerHTML += "<p class='legend-subhead'>"+ "<span class='innerhtml' style='font-size: 12px;'>median download - mbps</p>" + "<span class='innerhtml' style='font-size: 20px; color:" + getColorForDownloadSpeed(medianFixedDownloadSpeed) + ";'>" + medianFixedDownloadSpeed.toFixed(2) + " <span class='innerhtml' style='font-size: 12px; color: #969696;'>(19.00 & 26.06)</span>";
+                legend.innerHTML += "<p class='legend-subhead'>"+ "<span class='innerhtml' style='font-size: 12px;'>median latency - ms</p>" + "<span class='innerhtml' style='font-size: 20px; color:" + getColorForLatency(medianFixedLatency) + ";'>" + medianFixedLatency.toFixed(2) + " <span class='innerhtml' style='font-size: 12px; color: #969696;'>(8.00 & 5.00)</span>";
             }
+
+            // Function to fetch tree canopy data and perform calculations
+function calculateTreeCanopyCoverage(isochrone) {
+    // Fetch tree canopy data
+    fetch('tree_canopy_data.geojson')
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(treeCanopyData) {
+            // Calculate area of the isochrone
+            var isochroneArea = turf.area(isochrone);
+
+            // Perform intersection of isochrone and tree canopy
+            var intersection = turf.intersect(isochrone, treeCanopyData);
+
+            if (!intersection) {
+                console.log("No tree canopy within the isochrone.");
+                return;
+            }
+
+            // Calculate area of the intersection
+            var intersectionArea = turf.area(intersection);
+
+            // Calculate proportion of isochrone area covered by tree canopy
+            var coverageProportion = (intersectionArea / isochroneArea) * 100;
+
+            // Update legend with tree canopy coverage information
+            updateLegendWithTreeCanopyCoverage(coverageProportion.toFixed(2));
+        })
+        .catch(function(error) {
+            console.error('Error loading tree canopy data:', error);
+        });
+}
+
+// Function to update legend with tree canopy coverage information
+function updateLegendWithTreeCanopyCoverage(coverageProportion) {
+    // Find the legend element by its ID
+    var legend = document.getElementById("legend");
+
+    // Add a new section to the legend
+    legend.innerHTML += "<p class='legend-subhead'><strong>Tree Canopy Coverage</strong></p>" +
+                        "<p>" + coverageProportion + "% of isochrone area covered by tree canopy</p>";
+}
 
                                          
             // Mapping between data source values and display names
@@ -391,7 +512,7 @@
                 return categoryColors[category] || defaultColor;
             }
 
-            // Check if the car-crash layer is active
+            // Check if the car-crash/celltower layers are active
             var isCarCrashLayerActive = selectedDataSource === 'car-crashes';
             var isCellTowerLayerActive = selectedDataSource === 'celltowers';
 
@@ -416,11 +537,10 @@
                     ":</strong> " +
                     counts[category];
 
-                    // Append legend item to the legend only if the car-crash layer is not active
+                    // Append legend item to the legend only if the car-crash/celltower layers are not active
                     if (!isCarCrashLayerActive && !isCellTowerLayerActive || category !== 'Shannon diversity index') {
                         legend.appendChild(legendItem);
                     }
-                    
                 }
             }
 
