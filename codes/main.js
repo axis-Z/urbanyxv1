@@ -2,7 +2,7 @@ mapboxgl.accessToken = "pk.eyJ1Ijoiam9yam9uZTkwIiwiYSI6ImNrZ3R6M2FvdTBwbmwycXBib
 
 var map = new mapboxgl.Map({
     container: "map",
-    style: 'mapbox://styles/mapbox/navigation-preview-day-v4',
+    style: 'mapbox://styles/mapbox/navigation-preview-night-v4',
     center: [44.812, 41.741787],
     zoom: 12,
     maxZoom: 15.5,
@@ -118,7 +118,7 @@ fetch(url)
         map.once("idle", function () {
 
             // Fetch population data
-            fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/tbs_pop_grid.geojson')
+            fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/tbs_pop_points_2020.geojson')
             .then(function(response) {
                 return response.json();
             })
@@ -138,7 +138,7 @@ fetch(url)
 
                     // Calculate sum based on population data column        
                     var populationSum = populationWithinIsochrone.features.reduce(function (accumulator, feature) {
-                        return accumulator + feature.properties.POP_SQ_KM;
+                        return accumulator + feature.properties.gen_pop;
                     }, 0);
 
                     // Update legend with population sum    
@@ -179,6 +179,40 @@ fetch(url)
                             .catch(function(error) {
                                 console.error('Error loading tree canopy data:', error);
                             });
+
+                            // Fetch tree canopy data
+                        fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/urban_recreation_points.geojson')
+                    
+                        .then(function(response) {
+                            return response.json();
+                        })
+                        .then(function(urbRecreationData) {
+
+                            // Filter tree canopy data within isochrone boundary
+                            var urbRecreationWithinIsochrone = {
+                                type: "FeatureCollection",
+                                features: urbRecreationData.features.filter(function (feature) {
+                                    return turf.booleanPointInPolygon(
+                                        turf.point(feature.geometry.coordinates),
+                                        data.features[0]
+                                        );
+                                    })    
+                                };
+                            
+                                // Calculate sum based on area data column
+                                var urbRecreationArea = urbRecreationWithinIsochrone.features.reduce(function (accumulator, feature) {
+                                    return accumulator + feature.properties.urb_rec_area;    
+                                }, 0);
+                            
+                                // Calculate canopy area per inhabitant    
+                                var urbRecPerInhabitant = urbRecreationArea / populationSum;
+                            
+                                // Update legend with canopy per inhabitant
+                                updateUrbRec(urbRecPerInhabitant);
+                            })
+                            .catch(function(error) {
+                                console.error('Error loading tree canopy data:', error);
+                            });
                         }
                     });
                     
@@ -189,7 +223,7 @@ fetch(url)
                         var legend = document.getElementById("legend");
 
                         // Update the legend with the population sum
-                        legend.innerHTML += "<p><strong><span class='innerhtml' style='font-size: 14px;'>Estimated population</strong></p>" + 
+                        legend.innerHTML += "<p><strong><span class='innerhtml' style='font-size: 14px;'>Estimated Population</strong></p>" + 
                         "<p><span class='innerhtml' style='font-size: 20px; color:#969696;'>" + populationSum + "</p>";
                     }
 
@@ -200,9 +234,32 @@ fetch(url)
                         var legend = document.getElementById("legend");
         
                         // Update the legend with the canopy per inhabitant
-                        legend.innerHTML += "<p><strong><span class='innerhtml' style='font-size: 14px;'>Tree canopy coverage</strong></p>" + 
-                        "<p><span class='innerhtml' style='font-size: 20px; color:#969696;'>" + canopyPerInhabitant.toFixed(2) + 
+                        legend.innerHTML += "<p><strong><span class='innerhtml' style='font-size: 14px;'>Urban Shade Index</strong></p>" + 
+                        "<p><span class='innerhtml' style='font-size: 20px; color:#969696;'>" + canopyPerInhabitant.toFixed(2) + "</span>" +
                         "<span class='innerhtml' style='color:#969696;'> m<sup>2</sup>" + "<span class='innerhtml' style='font-size: 14px;'> per inhabitant</span>" + "</p>";
+                    }
+
+                    // Function to Update Legend with the canopy per inhabitant
+                    function updateUrbRec(urbRecPerInhabitant) {
+
+                        // Find the legend element by its ID
+                        var legend = document.getElementById("legend");
+
+                        // Function to determine color based on value
+                        function getColorForUrbRec(value) {
+
+                            // Define color thresholds for upload speed
+                            if (value >= 9) { //9sq.m is the recommended amount of minimum urban green space per inhabitant
+                                return { backgroundColor: '#78c679', fontColor: '#ffffff' };
+                            } else if (value >= 5) {
+                                return { backgroundColor: '#fd8d3c', fontColor: '#ffffff' };
+                            } else {
+                                return { backgroundColor: '#bd0026', fontColor: '#ffffff' };
+                            }
+                        }
+        
+                        // Update the legend with the canopy per inhabitant
+                        legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Urban Recreation Index</strong></p>" + "<p>" + "<span class='innerhtml' style='padding: 5px; font-size: 20px; color:" + getColorForUrbRec(urbRecPerInhabitant).fontColor +"; background-color:" + getColorForUrbRec(urbRecPerInhabitant).backgroundColor + ";'>" + urbRecPerInhabitant.toFixed(2) + "</span>" + "<span class='innerhtml' style='color:#969696;'> m<sup>2</sup>" + "<span class='innerhtml' style='font-size: 14px;'> per inhabitant</span>" + "</p>";
                     }
 
                     // Fetch relative wealth index data                
@@ -258,7 +315,7 @@ fetch(url)
                             }
 
                             // Append a new legend item for the average relative wealth index
-                            legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Wealth index</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 20px; color:" + getColorForWealthIndex(averageRelativeWealth).fontColor +"; background-color:" + getColorForWealthIndex(averageRelativeWealth).backgroundColor + ";'>" + averageRelativeWealth.toFixed(2) + "</p>";    
+                            legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Wealth index</strong></p>" + "<p>" + "<span class='innerhtml' style='padding: 5px; font-size: 20px; color:" + getColorForWealthIndex(averageRelativeWealth).fontColor +"; background-color:" + getColorForWealthIndex(averageRelativeWealth).backgroundColor + ";'>" + averageRelativeWealth.toFixed(2) + "</p>";    
                         }
 
                         // Check if cell tower dataset is active

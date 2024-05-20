@@ -1,7 +1,6 @@
 {
 "type": "FeatureCollection",
 "name": "tbs_pop_grid",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
 { "type": "Feature", "properties": { "OBJECTID": 14064, "Join_Count": 0, "TARGET_FID": 14063, "Id": 0, "mnc_access": 30, "batm_drive": 181, "SCAN": 0.0, "TRACK": 0.0, "BRIGHT_TI5": 0.0, "FRP": 0.0, "Shape_Leng": 4000.0, "Shape_Area": 1000000.0, "POP_SQ_KM": 75, "ORIG_FID": 0 }, "geometry": { "type": "Point", "coordinates": [ 44.905378706316533, 41.618800390852968 ] } },
 { "type": "Feature", "properties": { "OBJECTID": 14065, "Join_Count": 0, "TARGET_FID": 14064, "Id": 0, "mnc_access": 30, "batm_drive": 181, "SCAN": 0.0, "TRACK": 0.0, "BRIGHT_TI5": 0.0, "FRP": 0.0, "Shape_Leng": 4000.0, "Shape_Area": 1000000.0, "POP_SQ_KM": 181, "ORIG_FID": 1 }, "geometry": { "type": "Point", "coordinates": [ 44.917382045207169, 41.618809643808433 ] } },
