@@ -1,6 +1,15 @@
 map.on('mousemove', 'featuresWithinIsochrone-layer', function (e) {
     var features = e.features;
 
+        // Check selected data source
+        var selectedDataSource = document.getElementById("data_source").value;
+
+        // Check if tooltip should be hidden
+        if (selectedDataSource === "demography") {
+            hideTooltip();
+            return;
+        }
+
     // Check if there is a feature under the mouse pointer
     if (features.length > 0) {
         var hoveredFeature = features[0];
@@ -60,6 +69,7 @@ if (hoveredFeature.properties.hasOwnProperty('amenity') && (hoveredFeature.prope
         var tooltip = document.getElementById('tooltip');
         tooltip.style.display = 'none';
     }
+    
 });
 
 // Hide tooltip on mouseout

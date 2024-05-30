@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demography Pie Chart</title>
+    <link href="https://cdn.syncfusion.com/ej2/material.css" rel="stylesheet">
+    <script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
+    <style>
+        .innerhtml {
+            font-family: Arial, sans-serif;
+        }
+        .legend-circle {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 8px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div id="legend">
+        <!-- Container for the pie chart -->
+        <div id="genderPieChart" style="height: 400px; width: 400px;"></div>
+    </div>
+
+    <script>
+            // Function to update the legend with population and pie chart
+            function updatePopulationLegend(populationSum, menSum, womenSum, menPercentage, womenPercentage, kidSum = null, youthSum = null, womReprSum = null, elderlySum = null, kidPercentage = null, youthPercentage = null, womReprPercentage = null, elderlyPercentage = null) {
+                // Find the legend element by its ID
+                var legend = document.getElementById("legend");
+
+                // Clear the legend before updating it with new items
+                legend.innerHTML = "<div id='genderPieChart' style='height: 400px; width: 400px;'></div>";
+
+                // Update the legend with the population sum
+                legend.innerHTML += "<p><strong><span class='innerhtml' style='font-size: 16px;'>Demography</strong></p>" + 
+                "<p><span class='innerhtml' style='color:#969696; font-size: 18px;'>" + populationSum + "</span>" + "<span class='innerhtml' style='color:#969696; font-size: 14px;'> total residents</span></p>" + 
+                "<p><span class='innerhtml' style='color:#969696; font-size: 18px;'>" + menSum + " (" +  menPercentage + " %)" + "</span>" + "<span class='innerhtml' style='color:#969696; font-size: 14px;'> males</span></p>" + 
+                "<p><span class='innerhtml' style='color:#969696; font-size: 18px;'>" + womenSum + " (" +  womenPercentage + " %)" + "</span>" + "<span class='innerhtml' style='color:#969696; font-size: 14px;'> females</span></p>";
+
+                if (kidSum !== null && youthSum !== null && womReprSum !== null && elderlySum !== null && kidPercentage !== null && youthPercentage !== null && womReprPercentage !== null && elderlyPercentage !== null) {
+                    legend.innerHTML += "<p><strong><span class='innerhtml' style='font-size: 16px;'>Sex & Age groups</strong></p>" + 
+                    "<p><span class='innerhtml' style='color:#969696; font-size: 18px;'>" + kidSum + " (" +  kidPercentage + " %)" + "</span>" + "<span class='innerhtml' style='color:#969696; font-size: 14px;'> kids under 5 (Gen Alpha)</span></p>" + 
+                    "<p><span class='innerhtml' style='color:#969696; font-size: 18px;'>" + youthSum + " (" +  youthPercentage + " %)" + "</span>" + "<span class='innerhtml' style='color:#969696; font-size: 14px;'> Youth 15 to 24 (Gen Z)</span></p>" + 
+                    "<p><span class='innerhtml' style='color:#969696; font-size: 18px;'>" + womReprSum + " (" +  womReprPercentage + " %)" + "</span>" + "<span class='innerhtml' style='color:#969696; font-size: 14px;'> Females of repr. age (15-49) <br> (% total females)</span></p>" + 
+                    "<p><span class='innerhtml' style='color:#969696; font-size: 18px;'>" + elderlySum + " (" +  elderlyPercentage + " %)" + "</span>" + "<span class='innerhtml' style='color:#969696; font-size: 14px;'> Elderly over 60 (Boomers)</span></p>";  
+                }
+
+                // Create or update the pie chart using ej.charts.AccumulationChart
+                var pie = new ej.charts.AccumulationChart({
+                    series: [
+                        {
+                            dataSource: [
+                                { 'x': 'Males', y: menSum },
+                                { 'x': 'Females', y: womenSum }
+                            ],
+                            dataLabel: {
+                                visible: true,
+                                position: 'Inside'
+                            },
+                            xName: 'x',
+                            yName: 'y'
+                        }
+                    ]
+                });
+                pie.appendTo('#genderPieChart');
+            }
+    </script>
+</body>
+</html>

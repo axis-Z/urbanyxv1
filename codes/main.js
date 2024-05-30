@@ -63,7 +63,7 @@ map.on("click", function (e) {
     // Call function to generate isochrone
     generateIsochrone(lngLat);
 });
-                
+
 function generateIsochrone(lngLat) {
              
     // Access the selected travel mode             
@@ -85,7 +85,7 @@ function generateIsochrone(lngLat) {
     "&polygons=true&denoise=0.1&generalize=10&access_token=" +              
     mapboxgl.accessToken;
     
-fetch(url)
+    fetch(url)
     .then(function (response) {
         return response.json();
     })
@@ -103,13 +103,13 @@ fetch(url)
         // Fit the map view to the bounding box of the isochrone
         map.fitBounds(bbox, {
 
-            //bearing: -35,
-            //pitch: 52,
+            bearing: -35,
+            pitch: 30,
             padding: {
-                top: 90, 
-                right: 75, 
-                bottom: 75, 
-                left: 75
+                top: 15, 
+                right: 15, 
+                bottom: 15, 
+                left: 15
             }
         });
     
@@ -136,106 +136,236 @@ fetch(url)
                         })
                     };
 
-                    // Calculate sum based on population data column        
-                    var populationSum = populationWithinIsochrone.features.reduce(function (accumulator, feature) {
-                        return accumulator + feature.properties.gen_pop;
+    
+                    // Calculate men population sum
+                    var menSum = populationWithinIsochrone.features.reduce(function(accumulator, feature) {
+                        return accumulator + feature.properties.men_total;
                     }, 0);
 
-                    // Update legend with population sum    
-                    updatePopulationLegend(populationSum);
+                    // Calculate women population sum
+    
+                    var womenSum = populationWithinIsochrone.features.reduce(function(accumulator, feature) {
+    
+                        return accumulator + feature.properties.women_total;
+    
+                    }, 0);
 
-                    if (selectedDataSource === "pois-leisure") {
+    
+                    // Calculate total population sum
+    
+                    var populationSum = womenSum + menSum;
+
+    
+                    // Calculate percentages
+    
+                    var menPercentage = ((menSum / populationSum) * 100).toFixed(1);
+    
+                    var womenPercentage = ((womenSum / populationSum) * 100).toFixed(1);
+
+    
+                    // Check if the demography layer is selected (to be replaced with other layer)
+    
+                    if (selectedDataSource === "demography") { 
                         
-                        // Fetch tree canopy data
-                        fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/tree_canopy_points.geojson')
-                    
-                        .then(function(response) {
-                            return response.json();
-                        })
-                        .then(function(treeCanopyData) {
+                        // Calculate additional demographic groups if needed
+        
+                        var kidSum = populationWithinIsochrone.features.reduce(function(accumulator, feature) {
+        
+                            return accumulator + feature.properties.kids_five;
+        
+                        }, 0);
 
-                            // Filter tree canopy data within isochrone boundary
-                            var treeCanopyWithinIsochrone = {
-                                type: "FeatureCollection",
-                                features: treeCanopyData.features.filter(function (feature) {
-                                    return turf.booleanPointInPolygon(
-                                        turf.point(feature.geometry.coordinates),
-                                        data.features[0]
-                                        );
-                                    })    
-                                };
-                            
-                                // Calculate sum based on area data column
-                                var treeCanopyArea = treeCanopyWithinIsochrone.features.reduce(function (accumulator, feature) {
-                                    return accumulator + feature.properties.area_sq_m;    
-                                }, 0);
-                            
-                                // Calculate canopy area per inhabitant    
-                                var canopyPerInhabitant = treeCanopyArea / populationSum;
-                            
-                                // Update legend with canopy per inhabitant
-                                updateCanopyLegend(canopyPerInhabitant);
-                            })
-                            .catch(function(error) {
-                                console.error('Error loading tree canopy data:', error);
-                            });
+        
+                        var youthSum = populationWithinIsochrone.features.reduce(function(accumulator, feature) {
+        
+                            return accumulator + feature.properties.youth_15to24;
+        
+                        }, 0);
 
-                            // Fetch tree canopy data
-                        fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/urban_recreation_points.geojson')
-                    
-                        .then(function(response) {
-                            return response.json();
-                        })
-                        .then(function(urbRecreationData) {
+        
+                        var womReprSum = populationWithinIsochrone.features.reduce(function(accumulator, feature) {
+        
+                            return accumulator + feature.properties.women_repr_age;
+        
+                        }, 0);
 
-                            // Filter tree canopy data within isochrone boundary
-                            var urbRecreationWithinIsochrone = {
-                                type: "FeatureCollection",
-                                features: urbRecreationData.features.filter(function (feature) {
-                                    return turf.booleanPointInPolygon(
-                                        turf.point(feature.geometry.coordinates),
-                                        data.features[0]
-                                        );
-                                    })    
-                                };
-                            
-                                // Calculate sum based on area data column
-                                var urbRecreationArea = urbRecreationWithinIsochrone.features.reduce(function (accumulator, feature) {
-                                    return accumulator + feature.properties.urb_rec_area;    
-                                }, 0);
-                            
-                                // Calculate canopy area per inhabitant    
-                                var urbRecPerInhabitant = urbRecreationArea / populationSum;
-                            
-                                // Update legend with canopy per inhabitant
-                                updateUrbRec(urbRecPerInhabitant);
-                            })
-                            .catch(function(error) {
-                                console.error('Error loading tree canopy data:', error);
-                            });
-                        }
-                    });
-                    
-                    // Function to Update Legend with Population Sum
-                    function updatePopulationLegend(populationSum) {
-                        
-                        // Find the legend element by its ID
-                        var legend = document.getElementById("legend");
+        
+                        var elderlySum = populationWithinIsochrone.features.reduce(function(accumulator, feature) {
+        
+                            return accumulator + feature.properties.elderly_60;
+        
+                        }, 0);
 
-                        // Update the legend with the population sum
-                        legend.innerHTML += "<p><strong><span class='innerhtml' style='font-size: 14px;'>Estimated Population</strong></p>" + 
-                        "<p><span class='innerhtml' style='font-size: 20px; color:#969696;'>" + populationSum + "</p>";
+        
+                        var kidPercentage = ((kidSum / populationSum) * 100).toFixed(1);
+        
+                        var youthPercentage = ((youthSum / populationSum) * 100).toFixed(1);
+        
+                        var womReprPercentage = ((womReprSum / womenSum) * 100).toFixed(1);
+        
+                        var elderlyPercentage = ((elderlySum / populationSum) * 100).toFixed(1);
+
+        
+                        updatePopulationLegend(populationSum, menSum, womenSum, menPercentage, womenPercentage, kidSum, youthSum, womReprSum, elderlySum, kidPercentage, youthPercentage, womReprPercentage, elderlyPercentage);
+    
+                    } else {
+    
+                        updatePopulationLegend(populationSum, menSum, womenSum, menPercentage, womenPercentage);
+    
                     }
+    
+                    // Function to Update Legend with Population Sum
+
+    
+                    function updatePopulationLegend(populationSum, menSum, womenSum, menPercentage, womenPercentage, kidSum = null, youthSum = null, womReprSum = null, elderlySum = null, kidPercentage = null, youthPercentage = null, womReprPercentage = null, elderlyPercentage = null) {
+    
+                        // Find the legend element by its ID
+    
+                        var pielegend = document.getElementById("pielegend");
+    
+    
+                        // Find the legend element by its ID
+    
+                        var legend = document.getElementById("legend");
+    
+    
+                        // Clear the legend before updating it with new items
+    
+                        pielegend.innerHTML = "<div id='genderPieChart'><p class='piecharttitle'><strong><span class='innerhtml'> TOTAL POPULATION <br></strong></span>" + "<span class='innerhtml' style='color:#969696; font-size: 22px;'>" + populationSum + "</span></p></div>";
+    
+                        // Update the legend with the population sum
+    
+                        legend.innerHTML += "" ;
+    
+    
+                        if (kidSum !== null && youthSum !== null && womReprSum !== null && elderlySum !== null && kidPercentage !== null && youthPercentage !== null && womReprPercentage !== null &&elderlyPercentage !== null) {
+    
+                            pielegend.innerHTML +=
+    
+                            "<p><img class='img-text' src='/Users/giorgikankia/Documents/GitHub/urbanyxv1/img/2.png' alt='Gen alpha Image' style='vertical-align:middle; width:25%; height:25%;'>" + "<span class='innerhtml' style='color:#969696; font-size: 20px; text-align: right;'> " + kidSum + " (" +  kidPercentage + " %)" + "<span class='innerhtml' style='color:#969696; font-size: 12px;'> 0 to 5 Y.O." + "</span>" + "</p>" +  
+                            "<p><img class='img-text' src='/Users/giorgikankia/Documents/GitHub/urbanyxv1/img/1.png' alt='Gen Z Image' style='vertical-align:middle; width:25%; height:25%;'>" + "<span class='innerhtml' style='color:#969696; font-size: 20px; text-align: right;'> " + youthSum + " (" +  youthPercentage + " %)" + "<span class='innerhtml' style='color:#969696; font-size: 12px;'> 15 to 24 Y.O." + "</span>" + "</p>" + 
+                            "<p><img class='img-text' src='/Users/giorgikankia/Documents/GitHub/urbanyxv1/img/3.png' alt='Gen boomers' style='vertical-align:middle; width:25%; height:25%;'>" + "<span class='innerhtml' style='color:#969696; font-size: 20px; text-align: right;'> " + elderlySum + " (" + elderlyPercentage + " %)" + "<span class='innerhtml' style='color:#969696; font-size: 12px;'> over 60 Y.O." + "</span>" + "</p>" + 
+                            "<p><img class='img-text' src='/Users/giorgikankia/Documents/GitHub/urbanyxv1/img/4.png' alt='women of repr age' style='vertical-align:middle; width:25%; height:25%;'>" + "<span class='innerhtml' style='color:#969696; font-size: 20px; text-align: right;'> " + womReprSum  + " (" + womReprPercentage + " %)" + "<span class='innerhtml' style='color:#969696; font-size: 12px;'> % of females" + "</span></p></div>";     
+                        }
+    
+    
+                        // Data source for the pie chart including percentages
+                        var genderData = [ 
+                            { x: 'Females', y: womenSum, text: + womenSum + ' (' + womenPercentage + '%)',  fill: '#fdb462'  },
+                            { x: 'Males', y: menSum, text: + menSum + ' (' + menPercentage + '%)', fill: '#8dd3c7' }
+                        ];
+
+                        var genderPieChart = new ej.charts.AccumulationChart({
+                            series: [{
+                                dataSource: genderData,
+                                xName: 'x',
+                                yName: 'y',
+                                pointColorMapping: 'fill',
+                                type: 'Pie',
+                                dataLabel: {
+                                    visible: true,
+                                    position: 'Inside',
+                                    name: 'text',
+                                    font: {
+                                        fontFamily: 'JetBrains Mono',
+                                        color: 'black'
+                                    }
+                                }
+                            }],
+                            legendSettings: {
+                                visible: true,
+                                textStyle: {
+                                    fontFamily: 'JetBrains Mono',
+                                    color: '#969696'
+                                }
+                            }
+                        });
+                        genderPieChart.appendTo('#genderPieChart');
+                    }
+
+    
+                    if (selectedDataSource === "pois-leisure") {
+    
+                        // Fetch tree canopy data
+    
+                        fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/tree_canopy_points.geojson')
+    
+                        .then(function(response) {
+    
+                            return response.json();
+    
+                        })
+    
+                        .then(function(treeCanopyData) {
+    
+                            var treeCanopyWithinIsochrone = {
+    
+                                type: "FeatureCollection",
+    
+                                features: treeCanopyData.features.filter(function (feature) {
+    
+                                    return turf.booleanPointInPolygon(
+    
+                                        turf.point(feature.geometry.coordinates),
+    
+                                        data.features[0]
+    
+                                        );
+    
+                                    })
+    
+                                };
+
+                var treeCanopyArea = treeCanopyWithinIsochrone.features.reduce(function(accumulator, feature) {
+                    return accumulator + feature.properties.area_sq_m;
+                }, 0);
+
+                var canopyPerInhabitant = treeCanopyArea / populationSum;
+
+                updateCanopyLegend(canopyPerInhabitant);
+            })
+            .catch(function(error) {
+                console.error('Error loading tree canopy data:', error);
+            });
+
+        fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/urban_recreation_points.geojson')
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(urbRecreationData) {
+                var urbRecreationWithinIsochrone = {
+                    type: "FeatureCollection",
+                    features: urbRecreationData.features.filter(function (feature) {
+                        return turf.booleanPointInPolygon(
+                            turf.point(feature.geometry.coordinates),
+                            data.features[0]
+                        );
+                    })
+                };
+
+                var urbRecreationArea = urbRecreationWithinIsochrone.features.reduce(function(accumulator, feature) {
+                    return accumulator + feature.properties.urb_rec_area;
+                }, 0);
+
+                var urbRecPerInhabitant = urbRecreationArea / populationSum;
+
+                updateUrbRec(urbRecPerInhabitant);
+            })
+            .catch(function(error) {
+                console.error('Error loading urban recreation data:', error);
+            });
+    }
+});
 
                     // Function to Update Legend with the canopy per inhabitant
                     function updateCanopyLegend(canopyPerInhabitant) {
 
                         // Find the legend element by its ID
                         var legend = document.getElementById("legend");
-        
+
                         // Update the legend with the canopy per inhabitant
-                        legend.innerHTML += "<p><strong><span class='innerhtml' style='font-size: 14px;'>Urban Shade Index</strong></p>" + 
-                        "<p><span class='innerhtml' style='font-size: 20px; color:#969696;'>" + canopyPerInhabitant.toFixed(2) + "</span>" +
+                        legend.innerHTML += "<p><strong><span class='innerhtml' style='font-size: 16px;'>Urban Shade Index</strong></p>" + 
+                        "<p><span class='innerhtml' style='font-size: 18px; color:#969696;'>" + canopyPerInhabitant.toFixed(2) + "</span>" +
                         "<span class='innerhtml' style='color:#969696;'> m<sup>2</sup>" + "<span class='innerhtml' style='font-size: 14px;'> per inhabitant</span>" + "</p>";
                     }
 
@@ -259,7 +389,7 @@ fetch(url)
                         }
         
                         // Update the legend with the canopy per inhabitant
-                        legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Urban Recreation Index</strong></p>" + "<p>" + "<span class='innerhtml' style='padding: 5px; font-size: 20px; color:" + getColorForUrbRec(urbRecPerInhabitant).fontColor +"; background-color:" + getColorForUrbRec(urbRecPerInhabitant).backgroundColor + ";'>" + urbRecPerInhabitant.toFixed(2) + "</span>" + "<span class='innerhtml' style='color:#969696;'> m<sup>2</sup>" + "<span class='innerhtml' style='font-size: 14px;'> per inhabitant</span>" + "</p>";
+                        legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 16px;'>Urban Recreation Index</strong></p>" + "<p>" + "<span class='innerhtml' style='padding: 5px; font-size: 18px; color:" + getColorForUrbRec(urbRecPerInhabitant).fontColor +"; background-color:" + getColorForUrbRec(urbRecPerInhabitant).backgroundColor + ";'>" + urbRecPerInhabitant.toFixed(2) + "</span>" + "<span class='innerhtml' style='color:#969696;'> m<sup>2</sup>" + "<span class='innerhtml' style='font-size: 14px;'> per inhabitant</span>" + "</p>";
                     }
 
                     // Fetch relative wealth index data                
@@ -315,7 +445,7 @@ fetch(url)
                             }
 
                             // Append a new legend item for the average relative wealth index
-                            legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Wealth index</strong></p>" + "<p>" + "<span class='innerhtml' style='padding: 5px; font-size: 20px; color:" + getColorForWealthIndex(averageRelativeWealth).fontColor +"; background-color:" + getColorForWealthIndex(averageRelativeWealth).backgroundColor + ";'>" + averageRelativeWealth.toFixed(2) + "</p>";    
+                            legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 16px;'>Wealth index</strong></p>" + "<p>" + "<span class='innerhtml' style='padding: 5px; font-size: 18px; color:" + getColorForWealthIndex(averageRelativeWealth).fontColor +"; background-color:" + getColorForWealthIndex(averageRelativeWealth).backgroundColor + ";'>" + averageRelativeWealth.toFixed(2) + "</p>";    
                         }
 
                         // Check if cell tower dataset is active
@@ -379,10 +509,6 @@ fetch(url)
                                     // Update legend with median fixed internet upload speed, download speed, and latency
                                     updateFixedInternetSpeedLegend(medianFixedUploadSpeed, medianFixedDownloadSpeed, medianFixedLatency)    
                                 })
-
-                                .catch(function(error) {
-                                    console.error('Error loading average internet speed data:', error);
-                                });
 
                             // Fetch avg mob internet speed data
                             fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/mobile_internet_georgia.geojson')
@@ -494,9 +620,9 @@ fetch(url)
                             }
 
                             // Update the legend with fixed internet speed information
-                            legend.innerHTML += "<p class='legend-subhead'>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Fixed Internet Speed</strong>" + " <span class='innerhtml' style='font-size: 12px; color: #969696;'>(National & Tbilisi)</span></p>" + "<span class='innerhtml' style='font-size: 12px;'>median upload - mbps</p>" + "<span class='innerhtml' style='font-size: 20px; color:"  + getColorForUploadSpeed(medianFixedUploadSpeed) + ";'>" + medianFixedUploadSpeed.toFixed(2) + " <span class='innerhtml' style='font-size: 12px; color: #969696;'>(19.48 & 27.20)</span>";
-                            legend.innerHTML += "<p class='legend-subhead'>"+ "<span class='innerhtml' style='font-size: 12px;'>median download - mbps</p>" + "<span class='innerhtml' style='font-size: 20px; color:" + getColorForDownloadSpeed(medianFixedDownloadSpeed) + ";'>" + medianFixedDownloadSpeed.toFixed(2) + " <span class='innerhtml' style='font-size: 12px; color: #969696;'>(19.00 & 26.06)</span>";
-                            legend.innerHTML += "<p class='legend-subhead'>"+ "<span class='innerhtml' style='font-size: 12px;'>median latency - ms</p>" + "<span class='innerhtml' style='font-size: 20px; color:" + getColorForLatency(medianFixedLatency) + ";'>" + medianFixedLatency.toFixed(2) + " <span class='innerhtml' style='font-size: 12px; color: #969696;'>(8.00 & 5.00)</span>";
+                            legend.innerHTML += "<p class='legend-subhead'>" + "<strong><span class='innerhtml' style='font-size: 16px;'>Fixed Internet Speed</strong>" + " <span class='innerhtml' style='font-size: 14px; color: #969696;'>(National & Tbilisi)</span></p>" + "<span class='innerhtml' style='font-size: 14px;'>median upload - mbps</p>" + "<span class='innerhtml' style='font-size: 18px; color:"  + getColorForUploadSpeed(medianFixedUploadSpeed) + ";'>" + medianFixedUploadSpeed.toFixed(2) + " <span class='innerhtml' style='font-size: 14px; color: #969696;'>(19.48 & 27.20)</span>";
+                            legend.innerHTML += "<p class='legend-subhead'>"+ "<span class='innerhtml' style='font-size: 14px;'>median download - mbps</p>" + "<span class='innerhtml' style='font-size: 18px; color:" + getColorForDownloadSpeed(medianFixedDownloadSpeed) + ";'>" + medianFixedDownloadSpeed.toFixed(2) + " <span class='innerhtml' style='font-size: 14px; color: #969696;'>(19.00 & 26.06)</span>";
+                            legend.innerHTML += "<p class='legend-subhead'>"+ "<span class='innerhtml' style='font-size: 14px;'>median latency - ms</p>" + "<span class='innerhtml' style='font-size: 18px; color:" + getColorForLatency(medianFixedLatency) + ";'>" + medianFixedLatency.toFixed(2) + " <span class='innerhtml' style='font-size: 14px; color: #969696;'>(8.00 & 5.00)</span>";
                         }
 
                         // Function to Update Legend with Internet Speed
@@ -542,9 +668,9 @@ fetch(url)
                             }
 
                             // Update the legend with the mob internet speed information
-                            legend.innerHTML += "<p class='legend-subhead'>" + "<strong><span class='innerhtml' style='font-size: 14px;'>Mobile Internet Speed</strong>" + " <span class='innerhtml' style='font-size: 12px; color: #969696;'>(National & Tbilisi)</span></p>" + "<span class='innerhtml' style='font-size: 12px;'>median upload - mbps</p>" + "<span class='innerhtml' style='font-size: 20px; color:"  + getColorForMobUploadSpeed(medianMobileUploadSpeed) + ";'>" + medianMobileUploadSpeed.toFixed(2) + " <span class='innerhtml' style='font-size: 12px; color: #969696;'>(8.83 & 15.13)</span>";
-                            legend.innerHTML += "<p class='legend-subhead'>"+ "<span class='innerhtml' style='font-size: 12px;'>median download - mbps</p>" + "<span class='innerhtml' style='font-size: 20px; color:" + getColorForMobDownloadSpeed(medianMobileDownloadSpeed) + ";'>" + medianMobileDownloadSpeed.toFixed(2) + " <span class='innerhtml' style='font-size: 12px; color: #969696;'>(27.10 & 36.26)</span>";
-                            legend.innerHTML += "<p class='legend-subhead'>"+ "<span class='innerhtml' style='font-size: 12px;'>median latency - ms</p>" + "<span class='innerhtml' style='font-size: 20px; color:" + getColorForMobLatency(medianMobileLatency) + ";'>" + medianMobileLatency.toFixed(2) + " <span class='innerhtml' style='font-size: 12px; color: #969696;'>(22.00 & 21.00)</span>";
+                            legend.innerHTML += "<p class='legend-subhead'>" + "<strong><span class='innerhtml' style='font-size: 16px;'>Mobile Internet Speed</strong>" + " <span class='innerhtml' style='font-size: 14px; color: #969696;'>(National & Tbilisi)</span></p>" + "<span class='innerhtml' style='font-size: 14px;'>median upload - mbps</p>" + "<span class='innerhtml' style='font-size: 18px; color:"  + getColorForMobUploadSpeed(medianMobileUploadSpeed) + ";'>" + medianMobileUploadSpeed.toFixed(2) + " <span class='innerhtml' style='font-size: 14px; color: #969696;'>(8.83 & 15.13)</span>";
+                            legend.innerHTML += "<p class='legend-subhead'>"+ "<span class='innerhtml' style='font-size: 14px;'>median download - mbps</p>" + "<span class='innerhtml' style='font-size: 18px; color:" + getColorForMobDownloadSpeed(medianMobileDownloadSpeed) + ";'>" + medianMobileDownloadSpeed.toFixed(2) + " <span class='innerhtml' style='font-size: 14px; color: #969696;'>(27.10 & 36.26)</span>";
+                            legend.innerHTML += "<p class='legend-subhead'>"+ "<span class='innerhtml' style='font-size: 14px;'>median latency - ms</p>" + "<span class='innerhtml' style='font-size: 18px; color:" + getColorForMobLatency(medianMobileLatency) + ";'>" + medianMobileLatency.toFixed(2) + " <span class='innerhtml' style='font-size: 14px; color: #969696;'>(22.00 & 21.00)</span>";
                         }
                         
                         // Mapping between data source values and display names
@@ -557,6 +683,7 @@ fetch(url)
                             "pois-payment": " payment kiosks",
                             "car-crashes": " car crashes recorded",
                             "celltowers": " cell towers located",
+                            "demography": " test",
                         };
 
                         // Fetch point features from selected data source
@@ -564,6 +691,8 @@ fetch(url)
                         var dataUrl;
                         if (selectedDataSource === "pois-leisure") {
                             dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-leisure.geojson";
+                        } else if (selectedDataSource === "demography") {
+                            dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/tbs_pop_points_2020.geojson";            
                         } else if (selectedDataSource === "pois-health") {
                             dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-health.geojson";
                         } else if (selectedDataSource === "pois-pharmacy") {
@@ -643,14 +772,19 @@ fetch(url)
                                     var selectedDataSourceDisplayName = dataSourceDisplayNames[selectedDataSource];
 
                                     // Update legend title based on selected data source
-                                    var legendTitle = document.getElementById("legend-title");            
-                                    legendTitle.innerHTML = "<p>" + "<strong> <span class='innerhtml' style='color: yellow; background-color: black;'>" + totalCount + "</strong></span>" + (selectedDataSourceDisplayName || selectedDataSource.toUpperCase()) + " within " + "<strong> <span class='innerhtml' style='color: yellow; background-color: black'>" + contours_minutes + " minutes " + profile + "</span></strong> distance</p>";
-
+                                    var legendTitle = document.getElementById("legend-title");
+                                    
+                                    if (selectedDataSource === "demography") {
+                                        legendTitle.innerHTML = "<p>" + "<strong> <span class='innerhtml' style='color: yellow; background-color: black;'> Socio-demographic" + "</strong></span>" + " profile within " + "<strong> <span class='innerhtml' style='color: yellow; background-color: black'>" + contours_minutes + " minutes " + profile + "</span></strong> <br> distance of the clicked location</p>";
+                                    } else {
+                                        legendTitle.innerHTML = "<p>" + "<strong> <span class='innerhtml' style='color: yellow; background-color: black;'>" + totalCount + "</strong></span>" + (selectedDataSourceDisplayName || selectedDataSource.toUpperCase()) + " within " + "<strong> <span class='innerhtml' style='color: yellow; background-color: black'>" + contours_minutes + " minutes " + profile + "</span></strong> distance</p>";
+                                    }
+                                
                                     // Clear the legend before updating it with new items
                                     var legend = document.getElementById("legend");
                                     legend.innerHTML="";
                                     // Define colors for each category for legend
-                                    var defaultColor = "#cccccc"; // Default color for unspecified categories
+                                    var defaultColor = "rgba(204, 204, 204, 0.5)"; // Default color for unspecified categories
                                     var categoryColors = {
                                         "bar":"#e31a1c", // Color for bar
                                         "cafe":"#33a02c", // Color for cafe
@@ -692,39 +826,50 @@ fetch(url)
                                     // Check if the car-crash/celltower layers are active
                                     var isCarCrashLayerActive = selectedDataSource === 'car-crashes';
                                     var isCellTowerLayerActive = selectedDataSource === 'celltowers';
+                                    var isDemographyLayerActive = selectedDataSource === 'demography';
 
-                                    // Iterate over each category and update legend
-                                    for (var category in counts) {
-                                        if (counts.hasOwnProperty(category)) {
+                                    // Only update the legend if demography layer is not active
+
+                                    if (!isDemographyLayerActive) {
+
+                                        // Iterate over each category and update legend
+                                    
+                                        for (var category in counts) {
+                                            if (counts.hasOwnProperty(category)) {
     
-                                            // Replace null values with "other"                    
-                                            var categoryName = category === "null" ? "Other" : category;
+                                                // Replace null values with "other"                    
+                                            
+                                                var categoryName = category === "null" ? "Other" : category;
 
-                                            // Create a color circle for the category
-                                            var colorCircle = document.createElement("span");
-                                            colorCircle.className = "legend-circle";             
-                                            colorCircle.style.backgroundColor = getColor(categoryName);
+                                                // Create a color circle for the category
+                                                var colorCircle = document.createElement("span");
+                                                colorCircle.className = "legend-circle";             
+                                                colorCircle.style.backgroundColor = getColor(categoryName);
 
-                                            // Create a legend item for the category
-                                            var legendItem = document.createElement("p");
-                                            legendItem.innerHTML =
-                                            colorCircle.outerHTML +
-                                            "<strong>" +
-                                            categoryName.replace("_", " ") +
-                                            ":</strong> " +                    
-                                            counts[category];
-
-                                            // Append legend item to the legend only if the car-crash/celltower layers are not active
-                                            if (!isCarCrashLayerActive && !isCellTowerLayerActive || category !== 'Shannon diversity index') {
+                                                // Create a legend item for the category
+                                            
+                                                var legendItem = document.createElement("p");
+                                                legendItem.innerHTML = 
+                                                colorCircle.outerHTML +
+                                                "<strong>" +
+                                                categoryName.replace("_", " ") +
+                                                ":</strong> " +                    
+                                                counts[category];
+                                            
+                                                // Append legend item to the legend only if the car-crash/celltower layers are not active
+                                            
+                                                if (!isCarCrashLayerActive && !isCellTowerLayerActive && !isDemographyLayerActive || category !== 'Shannon diversity index') {
                                                 legend.appendChild(legendItem);
+                                            
                                             }
                                         }
                                     }
+                                }
 
                                     // Add Shannon Diversity Index to the legend if the car-crash layer is not active
-                                    if (!isCarCrashLayerActive && !isCellTowerLayerActive) {
+                                    if (!isCarCrashLayerActive && !isCellTowerLayerActive &&!isDemographyLayerActive ) {
                                         var shannonLegendItem = document.createElement("p");
-                                        shannonLegendItem.innerHTML = "<strong><span class='innerhtml' style='font-size: 14px;'>Diversity</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 20px; color:#969696;'>" + shannonIndex.toFixed(2) + "</strong></span>";
+                                        shannonLegendItem.innerHTML = "<strong><span class='innerhtml' style='font-size: 16px;'>Urban Functions Diversity Index</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 18px; color:#969696;'>" + shannonIndex.toFixed(2) + "</strong></span>";
                                         legend.appendChild(shannonLegendItem);            
                                     }
 
@@ -804,9 +949,10 @@ fetch(url)
                                 "circle-opacity": 1, 
 
                                 // Outline properties
-                                "circle-stroke-color": "#ffffff", // Color of the outline
-                                "circle-stroke-width": 1.2, // Width of the outline in pixels       
-                                "circle-color": [            
+                                //"circle-stroke-color": "#ffffff", // Color of the outline
+                                //"circle-stroke-width": 1.2, // Width of the outline in pixels       
+                                "circle-color": [
+                                                
                                     "match",
                                     ["get", "amenity"], // Property to base the color on            
                                     "bar","#e31a1c", // Color for bar
@@ -842,12 +988,31 @@ fetch(url)
                                     // Add more explicitly stated categories and colors as needed
                                     // If category is not explicitly stated, assign a default color
                                     // The last value in the paint expression will act as the default color
-                                    "#cccccc" // Default color for all other categories
+                                    "rgba(204, 204, 204, 0)" // Default color for all other categories
                                 ],
-                            },
-                        })
-                    });
 
+                            // Define stroke color conditionally
+                            "circle-stroke-color": [
+                                "case",
+                                // If the color is default, no stroke color
+                                ["==", ["get", "amenity"], null],
+                                "rgba(0, 0, 0, 0)",
+                                // Otherwise, white stroke color
+                                "#ffffff"
+                            ],
+        
+                            // Define stroke width conditionally
+                            "circle-stroke-width": [
+                                "case",
+                                // If the color is default, no stroke width
+                                ["==", ["get", "amenity"], null],
+                                0,
+                                // Otherwise, 1.2 stroke width
+                                1.2
+                            ]
+                        }
+                    });
+                });
                     
                     document.addEventListener("DOMContentLoaded", function () {
                                         
@@ -891,4 +1056,3 @@ fetch(url)
                         var feature = e.features[0];
                         console.log('Clicked feature properties:', feature.properties);
                     })
-                    

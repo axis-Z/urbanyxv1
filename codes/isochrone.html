@@ -34,6 +34,9 @@
         <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
         <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
 
+        <link href="https://cdn.syncfusion.com/ej2/material.css" rel="stylesheet">
+        <script src="https://cdn.syncfusion.com/ej2/dist/ej2.min.js"></script>
+
     </head>
     <style>
 
@@ -438,13 +441,14 @@ footer {
     position: absolute;
     /*bottom: 50px;*/
     left: 10px;
+    width: 100%;
     color:rgba(40, 39, 39, 0.9);
     font-family:  JetBrains Mono, monospace;
     font-size: 14px;
     /*background: rgba(108, 134, 207, 0.75);
     /*width: 250px;*/
-    margin: 0;
-    padding: 0 0 50px 0;
+    margin-top: 20px;
+    padding: 0 20px 50px 0;
     /*box-shadow: 0 0 20px 0 #35414c;
     /*border-top: 1.2px solid white;
     border-left: 1.2px solid white;*/
@@ -458,6 +462,23 @@ footer {
     -moz-appearance: none;
 }
 
+.piecharttitle {
+    font-family:  JetBrains Mono, monospace;
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#genderPieChart {
+    display: none;
+    position: absolute;
+    height: 320px;
+    width: 320px;
+    top: 10px;
+    margin: auto; /* Center horizontally */
+    margin-bottom: 75px;
+}
+
 #sidebar-content {
     position: absolute;
     background-color: transparent;
@@ -467,7 +488,7 @@ footer {
 }
 
 .innerhtml {
-    padding: 0;
+    font-family:  JetBrains Mono, monospace;
 }
 
 #legend-title {
@@ -597,6 +618,7 @@ footer {
                     <div>
                         <h4 id="data-source" style="font-size: 14px;">Data Source</h4>
                         <select id="data_source">
+                            <option value="demography">Demography</option>
                             <option value="pois-leisure">Leisure</option>
                             <option value="pois-health">Healthcare</option>
                             <option value="pois-pharmacy">Pharmacies</option>
@@ -612,14 +634,19 @@ footer {
             <div class="intro">
                 <!-- <span style="background-color: #6c86cf; color: white; border: 1px solid black; padding: 5px; margin-left: 10px;"><strong>DIVERSITY SCORE</strong></span>
                 <p class="intro">Curious how diverse the urban built environment is? See more about Shannon's Diversity Index <a class="index" href="https://en.wikipedia.org/wiki/Diversity_index">here.</a></p>-->
-                <div id="legend" class="legend"></div></div>
-            
+                <div id="pielegend" class="pielegend">
+                    <div id="genderPieChart"></div>         
+                </div>
+                <div id="legend" class="legend"></div>
+                
+            </div>
+
             <div id="sidebar-content"></div> 
             <div id="note">
                 <p class="note">NOTE: Use desktop web browser for full functionality</p>
             </div>    
         </div>
-        <div class="heading"><p class="beta">v0.1 [beta]</p>
+        <div class="heading"><p class="beta">v1.0 [beta]</p>
             <h1>URBANYX</h1>
         </div>       
         <footer>
