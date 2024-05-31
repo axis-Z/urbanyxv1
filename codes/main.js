@@ -333,7 +333,7 @@ function generateIsochrone(lngLat) {
                         }
         
                         // Update the legend with the canopy per inhabitant
-                        legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 16px;'>Urban Recreation Index</strong></p>" + "<p>" + "<span class='innerhtml' style='padding: 5px; font-size: 18px; color:" + getColorForUrbRec(urbRecPerInhabitant).fontColor +"; background-color:" + getColorForUrbRec(urbRecPerInhabitant).backgroundColor + ";'>" + urbRecPerInhabitant.toFixed(2) + "</span>" + "<span class='innerhtml' style='color:#969696;'> m<sup>2</sup>" + "<span class='innerhtml' style='font-size: 14px;'> per inhabitant</span>" + "</p>";
+                        legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 16px;'>Urban Recreation Index</strong></p>" + "<p>" + "<span class='innerhtml' style='padding: 5px; font-size: 18px; border-radius: 3px; color:" + getColorForUrbRec(urbRecPerInhabitant).fontColor +"; background-color:" + getColorForUrbRec(urbRecPerInhabitant).backgroundColor + ";'>" + urbRecPerInhabitant.toFixed(2) + "</span>" + "<span class='innerhtml' style='color:#969696;'> m<sup>2</sup>" + "<span class='innerhtml' style='font-size: 14px;'> per inhabitant</span>" + "</p>";
                     }
 
                     // Fetch relative wealth index data                
@@ -389,7 +389,7 @@ function generateIsochrone(lngLat) {
                             }
 
                             // Append a new legend item for the average relative wealth index
-                            legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 16px;'>Wealth index</strong></p>" + "<p>" + "<span class='innerhtml' style='padding: 5px; font-size: 18px; color:" + getColorForWealthIndex(averageRelativeWealth).fontColor +"; background-color:" + getColorForWealthIndex(averageRelativeWealth).backgroundColor + ";'>" + averageRelativeWealth.toFixed(2) + "</p>";    
+                            legend.innerHTML += "<p>" + "<strong><span class='innerhtml' style='font-size: 16px;'>Wealth index</strong></p>" + "<p>" + "<span class='innerhtml' style='padding: 5px; font-size: 18px; border-radius: 3px; color:" + getColorForWealthIndex(averageRelativeWealth).fontColor +"; background-color:" + getColorForWealthIndex(averageRelativeWealth).backgroundColor + ";'>" + averageRelativeWealth.toFixed(2) + "</p>";    
                         }
 
                         // Check if cell tower dataset is active
@@ -719,9 +719,9 @@ function generateIsochrone(lngLat) {
                                     var legendTitle = document.getElementById("legend-title");
                                     
                                     if (selectedDataSource === "demography") {
-                                        legendTitle.innerHTML = "<p>" + "<strong> <span class='innerhtml' style='color: yellow; background-color: black;'> Socio-demographic" + "</strong></span>" + " profile within " + "<strong> <span class='innerhtml' style='color: yellow; background-color: black'>" + contours_minutes + " minutes " + profile + "</span></strong> <br> distance of the clicked location</p>";
+                                        legendTitle.innerHTML = "<p>" + "<strong> <span class='innerhtml' style='color: yellow; background-color: black; padding: 2px 4px; border-radius: 3px;'> Socio-demographic" + "</strong></span>" + " profile within " + "<strong> <span class='innerhtml' style='color: yellow; background-color: black; padding: 2px 4px; border-radius: 3px;'>" + contours_minutes + " minutes " + profile + "</span></strong> <br> distance of the clicked location</p>";
                                     } else {
-                                        legendTitle.innerHTML = "<p>" + "<strong> <span class='innerhtml' style='color: yellow; background-color: black;'>" + totalCount + "</strong></span>" + (selectedDataSourceDisplayName || selectedDataSource.toUpperCase()) + " within " + "<strong> <span class='innerhtml' style='color: yellow; background-color: black'>" + contours_minutes + " minutes " + profile + "</span></strong> distance</p>";
+                                        legendTitle.innerHTML = "<p>" + "<strong> <span class='innerhtml' style='color: yellow; background-color: black; padding: 2px 4px; border-radius: 3px;'>" + totalCount + "</strong></span>" + (selectedDataSourceDisplayName || selectedDataSource.toUpperCase()) + " within " + "<strong> <span class='innerhtml' style='color: yellow; background-color: black; padding: 2px 4px; border-radius: 3px;'>" + contours_minutes + " minutes " + profile + "</span></strong> distance</p>";
                                     }
                                 
                                     // Clear the legend before updating it with new items

@@ -41,14 +41,14 @@ map.on('mousemove', 'featuresWithinIsochrone-layer', function (e) {
                 // Define the function to determine the background color based on the studentPrc value
 
                 function getValueBackgroundColor(studentsPrc) {
-                    if (studentsPrc < 50) {
-                        return '#d4edda'; // Light green
-                    } else if (studentsPrc >= 50 && studentsPrc < 75) {
-                        return '#fff3cd'; // Light yellow
-                    } else if (studentsPrc >= 75 && studentsPrc < 90) {
-                        return '#ffeeba'; // Medium yellow
+                    if (studentsPrc < 30) {
+                        return '#d7191c'; // red
+                    } else if (studentsPrc >= 30 && studentsPrc < 75) {
+                        return '#a6d96a'; // green
+                    } else if (studentsPrc >= 75 && studentsPrc < 100) {
+                        return '#fdae61'; // orange
                     } else {
-                        return '#f8d7da'; // Light red
+                        return '#d7191c'; // red
                     }
                 }
 
