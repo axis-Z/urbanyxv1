@@ -112,7 +112,6 @@ function generateIsochrone(lngLat) {
                 left: 15
             }
         });
-    
 
         // Adjust padding as needed
         map.once("idle", function () {
@@ -136,108 +135,68 @@ function generateIsochrone(lngLat) {
                         })
                     };
 
-    
                     // Calculate men population sum
                     var menSum = populationWithinIsochrone.features.reduce(function(accumulator, feature) {
                         return accumulator + feature.properties.men_total;
                     }, 0);
 
                     // Calculate women population sum
-    
                     var womenSum = populationWithinIsochrone.features.reduce(function(accumulator, feature) {
-    
                         return accumulator + feature.properties.women_total;
-    
                     }, 0);
-
     
                     // Calculate total population sum
-    
                     var populationSum = womenSum + menSum;
-
     
                     // Calculate percentages
-    
                     var menPercentage = ((menSum / populationSum) * 100).toFixed(1);
-    
                     var womenPercentage = ((womenSum / populationSum) * 100).toFixed(1);
 
-    
                     // Check if the demography layer is selected (to be replaced with other layer)
-    
                     if (selectedDataSource === "demography") { 
-                        
+
                         // Calculate additional demographic groups if needed
-        
                         var kidSum = populationWithinIsochrone.features.reduce(function(accumulator, feature) {
-        
                             return accumulator + feature.properties.kids_five;
-        
                         }, 0);
 
-        
                         var youthSum = populationWithinIsochrone.features.reduce(function(accumulator, feature) {
-        
                             return accumulator + feature.properties.youth_15to24;
-        
                         }, 0);
-
         
                         var womReprSum = populationWithinIsochrone.features.reduce(function(accumulator, feature) {
-        
                             return accumulator + feature.properties.women_repr_age;
-        
                         }, 0);
 
-        
                         var elderlySum = populationWithinIsochrone.features.reduce(function(accumulator, feature) {
-        
                             return accumulator + feature.properties.elderly_60;
-        
                         }, 0);
 
-        
                         var kidPercentage = ((kidSum / populationSum) * 100).toFixed(1);
-        
                         var youthPercentage = ((youthSum / populationSum) * 100).toFixed(1);
-        
                         var womReprPercentage = ((womReprSum / womenSum) * 100).toFixed(1);
-        
                         var elderlyPercentage = ((elderlySum / populationSum) * 100).toFixed(1);
 
-        
                         updatePopulationLegend(populationSum, menSum, womenSum, menPercentage, womenPercentage, kidSum, youthSum, womReprSum, elderlySum, kidPercentage, youthPercentage, womReprPercentage, elderlyPercentage);
-    
                     } else {
-    
                         updatePopulationLegend(populationSum, menSum, womenSum, menPercentage, womenPercentage);
-    
                     }
     
                     // Function to Update Legend with Population Sum
-
-    
                     function updatePopulationLegend(populationSum, menSum, womenSum, menPercentage, womenPercentage, kidSum = null, youthSum = null, womReprSum = null, elderlySum = null, kidPercentage = null, youthPercentage = null, womReprPercentage = null, elderlyPercentage = null) {
     
                         // Find the legend element by its ID
-    
                         var pielegend = document.getElementById("pielegend");
     
-    
                         // Find the legend element by its ID
-    
                         var legend = document.getElementById("legend");
-    
-    
+
                         // Clear the legend before updating it with new items
-    
                         pielegend.innerHTML = "<div id='genderPieChart'><p class='piecharttitle'><strong><span class='innerhtml'> TOTAL POPULATION <br></strong></span>" + "<span class='innerhtml' style='color:#969696; font-size: 22px;'>" + populationSum + "</span></p></div>";
     
                         // Update the legend with the population sum
-    
                         legend.innerHTML += "" ;
-    
-    
+
                         if (kidSum !== null && youthSum !== null && womReprSum !== null && elderlySum !== null && kidPercentage !== null && youthPercentage !== null && womReprPercentage !== null &&elderlyPercentage !== null) {
     
                             pielegend.innerHTML +=
@@ -247,7 +206,6 @@ function generateIsochrone(lngLat) {
                             "<p><img class='img-text' src='/Users/giorgikankia/Documents/GitHub/urbanyxv1/img/3.png' alt='Gen boomers' style='vertical-align:middle; width:25%; height:25%;'>" + "<span class='innerhtml' style='color:#969696; font-size: 20px; text-align: right;'> " + elderlySum + " (" + elderlyPercentage + " %)" + "<span class='innerhtml' style='color:#969696; font-size: 12px;'> over 60 Y.O." + "</span>" + "</p>" + 
                             "<p><img class='img-text' src='/Users/giorgikankia/Documents/GitHub/urbanyxv1/img/4.png' alt='women of repr age' style='vertical-align:middle; width:25%; height:25%;'>" + "<span class='innerhtml' style='color:#969696; font-size: 20px; text-align: right;'> " + womReprSum  + " (" + womReprPercentage + " %)" + "<span class='innerhtml' style='color:#969696; font-size: 12px;'> % of females" + "</span></p></div>";     
                         }
-    
     
                         // Data source for the pie chart including percentages
                         var genderData = [ 
@@ -282,80 +240,66 @@ function generateIsochrone(lngLat) {
                         });
                         genderPieChart.appendTo('#genderPieChart');
                     }
-
     
                     if (selectedDataSource === "pois-leisure") {
     
                         // Fetch tree canopy data
-    
                         fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/tree_canopy_points.geojson')
-    
                         .then(function(response) {
-    
                             return response.json();
-    
                         })
-    
                         .then(function(treeCanopyData) {
-    
                             var treeCanopyWithinIsochrone = {
-    
                                 type: "FeatureCollection",
-    
                                 features: treeCanopyData.features.filter(function (feature) {
-    
                                     return turf.booleanPointInPolygon(
-    
                                         turf.point(feature.geometry.coordinates),
-    
                                         data.features[0]
-    
                                         );
-    
                                     })
-    
                                 };
 
-                var treeCanopyArea = treeCanopyWithinIsochrone.features.reduce(function(accumulator, feature) {
-                    return accumulator + feature.properties.area_sq_m;
-                }, 0);
+                                var treeCanopyArea = treeCanopyWithinIsochrone.features.reduce(function(accumulator, feature) {
+                                    return accumulator + feature.properties.area_sq_m;
+                                }, 0);
 
-                var canopyPerInhabitant = treeCanopyArea / populationSum;
+                                var canopyPerInhabitant = treeCanopyArea / populationSum;
+                                updateCanopyLegend(canopyPerInhabitant);
+                            })
+                            .catch(function(error) {
+                                console.error('Error loading tree canopy data:', error);
+                            });
 
-                updateCanopyLegend(canopyPerInhabitant);
-            })
-            .catch(function(error) {
-                console.error('Error loading tree canopy data:', error);
-            });
+        
+                            fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/urban_recreation_points.geojson')
+                            .then(function(response) {
+                                return response.json();
+                            })
+            
+                            .then(function(urbRecreationData) {
+                                var urbRecreationWithinIsochrone = {
+                                    type: "FeatureCollection",
+                                    features: urbRecreationData.features.filter(function (feature) {
+                                        return turf.booleanPointInPolygon(
+                                            turf.point(feature.geometry.coordinates),
+                                            data.features[0]
+                                            );
+                                        })
+                                    };
 
-        fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/urban_recreation_points.geojson')
-            .then(function(response) {
-                return response.json();
-            })
-            .then(function(urbRecreationData) {
-                var urbRecreationWithinIsochrone = {
-                    type: "FeatureCollection",
-                    features: urbRecreationData.features.filter(function (feature) {
-                        return turf.booleanPointInPolygon(
-                            turf.point(feature.geometry.coordinates),
-                            data.features[0]
-                        );
-                    })
-                };
+                                    var urbRecreationArea = urbRecreationWithinIsochrone.features.reduce(function(accumulator, feature) {
+                                        return accumulator + feature.properties.urb_rec_area;
+                                    }, 0);
+            
+                                    var urbRecPerInhabitant = urbRecreationArea / populationSum;
 
-                var urbRecreationArea = urbRecreationWithinIsochrone.features.reduce(function(accumulator, feature) {
-                    return accumulator + feature.properties.urb_rec_area;
-                }, 0);
-
-                var urbRecPerInhabitant = urbRecreationArea / populationSum;
-
-                updateUrbRec(urbRecPerInhabitant);
-            })
-            .catch(function(error) {
-                console.error('Error loading urban recreation data:', error);
-            });
-    }
-});
+                                    updateUrbRec(urbRecPerInhabitant);
+                                })
+                                .catch(function(error) {
+                                    console.error('Error loading urban recreation data:', error);
+                                });
+                            }
+                        });
 
                     // Function to Update Legend with the canopy per inhabitant
                     function updateCanopyLegend(canopyPerInhabitant) {
@@ -680,7 +624,7 @@ function generateIsochrone(lngLat) {
                             "pois-pharmacy": " pharmacies",
                             "pois-bank": " bank offices",
                             "pois-atm": " ATMs",
-                            "pois-payment": " payment kiosks",
+                            "public_schools": " public schools",
                             "car-crashes": " car crashes recorded",
                             "celltowers": " cell towers located",
                             "demography": " test",
@@ -701,8 +645,8 @@ function generateIsochrone(lngLat) {
                             dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-bank.geojson";
                         } else if (selectedDataSource === "pois-atm") {
                             dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-atm.geojson";
-                        } else if (selectedDataSource === "pois-payment") {
-                            dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/pois-payment_terminal.geojson";
+                        } else if (selectedDataSource === "public_schools") {
+                            dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/public_schools.geojson";
                         } else if (selectedDataSource === "car-crashes") {
                             dataUrl = "https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/car_crashes.geojson";
                         } else if (selectedDataSource === "celltowers") {
@@ -815,7 +759,11 @@ function generateIsochrone(lngLat) {
                                         "injury":"#c51b7d", // Color for serious car crashes resulting in injuries
                                         "GSM (2G)":"#2b8cbe", // Color for GSM (2G)
                                         "UMTS (3G)":"#feb24c", // Color for UMTS (3G)
-                                        "LTE (4G)":"#dd1c77", // Color for LTE (4G)            
+                                        "LTE (4G)":"#dd1c77", // Color for LTE (4G)
+                                        "Good":"#1a9641", // Color for good condition of school building
+                                        "Fair":"#a6d96a", // Color for fair condition of school building
+                                        "Bad":"#fdae61", // Color for bad condition of school building                                      
+                                        "Replacement":"#d7191c", // Color for the school building in need of replacement           
                                     };
 
                                     // Function to get color based on category
@@ -827,6 +775,7 @@ function generateIsochrone(lngLat) {
                                     var isCarCrashLayerActive = selectedDataSource === 'car-crashes';
                                     var isCellTowerLayerActive = selectedDataSource === 'celltowers';
                                     var isDemographyLayerActive = selectedDataSource === 'demography';
+                                    var isSchoolLayerActive = selectedDataSource === 'public_schools';
 
                                     // Only update the legend if demography layer is not active
 
@@ -856,9 +805,9 @@ function generateIsochrone(lngLat) {
                                                 ":</strong> " +                    
                                                 counts[category];
                                             
-                                                // Append legend item to the legend only if the car-crash/celltower layers are not active
+                                                // Append legend item to the legend only if the car-crash/celltower/demography layers are not active
                                             
-                                                if (!isCarCrashLayerActive && !isCellTowerLayerActive && !isDemographyLayerActive || category !== 'Shannon diversity index') {
+                                                if (!isCarCrashLayerActive && !isCellTowerLayerActive && !isDemographyLayerActive && !isSchoolLayerActive || category !== 'Shannon diversity index') {
                                                 legend.appendChild(legendItem);
                                             
                                             }
@@ -867,7 +816,7 @@ function generateIsochrone(lngLat) {
                                 }
 
                                     // Add Shannon Diversity Index to the legend if the car-crash layer is not active
-                                    if (!isCarCrashLayerActive && !isCellTowerLayerActive &&!isDemographyLayerActive ) {
+                                    if (!isCarCrashLayerActive && !isCellTowerLayerActive && !isDemographyLayerActive && !isSchoolLayerActive) {
                                         var shannonLegendItem = document.createElement("p");
                                         shannonLegendItem.innerHTML = "<strong><span class='innerhtml' style='font-size: 16px;'>Urban Functions Diversity Index</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 18px; color:#969696;'>" + shannonIndex.toFixed(2) + "</strong></span>";
                                         legend.appendChild(shannonLegendItem);            
@@ -985,6 +934,10 @@ function generateIsochrone(lngLat) {
                                     "GSM (2G)","#2b8cbe", // Color for GSM (2G)
                                     "UMTS (3G)","#feb24c", // Color for UMTS (3G)
                                     "LTE (4G)","#dd1c77", // Color for LTE (4G)
+                                    "Good","#1a9641", // Color for good condition of school building
+                                    "Fair","#a6d96a", // Color for fair condition of school building
+                                    "Bad","#fdae61", // Color for bad condition of school building                                      
+                                    "Replacement","#d7191c", // Color for the school building in need of replacement           
                                     // Add more explicitly stated categories and colors as needed
                                     // If category is not explicitly stated, assign a default color
                                     // The last value in the paint expression will act as the default color
