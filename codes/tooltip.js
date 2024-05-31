@@ -23,13 +23,16 @@ map.on('mousemove', 'featuresWithinIsochrone-layer', function (e) {
             var amenity = hoveredFeature.properties.amenity || 'N/A';
             tooltipContent = '<p><strong>Date:</strong> ' + date + '</p>' +
             '<p><strong>Crash Severity:</strong> ' + amenity + '</p>';
+            
         } else if (hoveredFeature.properties.hasOwnProperty('amenity') && (hoveredFeature.properties.amenity === 'GSM (2G)' || hoveredFeature.properties.amenity === 'UMTS (3G)' || hoveredFeature.properties.amenity === 'LTE (4G)')) {
             var amenity = hoveredFeature.properties.amenity || 'N/A';
             var range = hoveredFeature.properties.range || 'N/A';
             tooltipContent = '<p><strong>Technology:</strong> ' + amenity + '</p>' +
             '<p><strong>Range (m):</strong> ' + range + '</p>';
+
         } else if (hoveredFeature.properties.hasOwnProperty('amenity') && (hoveredFeature.properties.amenity === 'Fair' || hoveredFeature.properties.amenity === 'Good' || hoveredFeature.properties.amenity === 'Bad' || hoveredFeature.properties.amenity === 'Replacement')) {
                 var schoolName = hoveredFeature.properties.school_name || 'N/A';
+                var constrDate = hoveredFeature.properties.constr_year || 'N/A';
                 var assessmentDate = hoveredFeature.properties['Assessment date'] || 'N/A';
                 var students = hoveredFeature.properties.students || 'N/A';
                 var studentsPrc = hoveredFeature.properties.capacity || 'N/A';
@@ -55,10 +58,16 @@ map.on('mousemove', 'featuresWithinIsochrone-layer', function (e) {
                 // Get the appropriate background color for the value
                 var valueBackgroundColor = getValueBackgroundColor(studentsPrc);
 
-                tooltipContent = '<h3 style="text-align: center;">' + schoolName + '</h3>' + '<p><strong>Assessment Date:</strong> ' + assessmentDate + '</p>' +
-                '<p><strong>Number of students:</strong> ' + students + '</p>' + '<p><strong>Capacity Used:</strong> <span style="background-color:' + valueBackgroundColor + '; padding: 2px 4px; border-radius: 3px;">' + studentsPrc + '%</span></p>';
+                tooltipContent = 
+
+                '<h3 style="text-align: center;">' + schoolName + '</h3>' + 
+                '<p><strong>Construction Year:</strong> ' + constrDate + '</p>' + 
+                '<p><strong>Assessment Date:</strong> ' + assessmentDate + '</p>' + 
+                '<p><strong>Number of Students:</strong> ' + students + '</p>' + 
+                '<p><strong>Capacity Used:</strong> <span style="background-color:' + valueBackgroundColor + '; padding: 2px 4px; border-radius: 3px;">' + studentsPrc + '%</span></p>';
         
             } else {
+
             var address = hoveredFeature.properties['addr:street'] || '';
             var housenumber = hoveredFeature.properties['addr:housenumber'] || '';
             var name = hoveredFeature.properties.name || 'N/A';
