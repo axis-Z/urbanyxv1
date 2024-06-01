@@ -23,7 +23,7 @@ map.on('mousemove', 'featuresWithinIsochrone-layer', function (e) {
             var amenity = hoveredFeature.properties.amenity || 'N/A';
             tooltipContent = '<p><strong>Date:</strong> ' + date + '</p>' +
             '<p><strong>Crash Severity:</strong> ' + amenity + '</p>';
-            
+
         } else if (hoveredFeature.properties.hasOwnProperty('amenity') && (hoveredFeature.properties.amenity === 'GSM (2G)' || hoveredFeature.properties.amenity === 'UMTS (3G)' || hoveredFeature.properties.amenity === 'LTE (4G)')) {
             var amenity = hoveredFeature.properties.amenity || 'N/A';
             var range = hoveredFeature.properties.range || 'N/A';
@@ -36,14 +36,15 @@ map.on('mousemove', 'featuresWithinIsochrone-layer', function (e) {
                 var assessmentDate = hoveredFeature.properties['Assessment date'] || 'N/A';
                 var students = hoveredFeature.properties.students || 'N/A';
                 var studentsPrc = hoveredFeature.properties.capacity || 'N/A';
-                var range = hoveredFeature.properties.range || 'N/A';
-                var range = hoveredFeature.properties.range || 'N/A';
-                var range = hoveredFeature.properties.range || 'N/A';
-                var range = hoveredFeature.properties.range || 'N/A';
+                var windows = hoveredFeature.properties.windows || 'N/A';
+                var waterSystem = hoveredFeature.properties.water || 'N/A';
+                var heating = hoveredFeature.properties.heating || 'N/A';
+                var gasHeating = hoveredFeature.properties.gas_heating || 'N/A';
+                var woodHeating = hoveredFeature.properties.wood_heating || 'N/A';
 
                 // Define the function to determine the background color based on the studentPrc value
 
-                function getValueBackgroundColor(studentsPrc) {
+                function getStudentsPrcBackgroundColor(studentsPrc) {
                     if (studentsPrc < 30) {
                         return '#d7191c'; // red
                     } else if (studentsPrc >= 30 && studentsPrc < 75) {
@@ -55,8 +56,67 @@ map.on('mousemove', 'featuresWithinIsochrone-layer', function (e) {
                     }
                 }
 
+                function getWindowsBackgroundColor(windows) {
+                    // Define a mapping of string values to colors
+                    const colorMap = {
+                        "Fair": '#a6d96a', // light green
+                        "Good": '#1a9641', // green
+                        "Bad": '#f4a582', // orange
+                        "Damaged": '#d7191c' // red
+                    };
+                
+                    // Check if the status is in the colorMap
+                    if (windows in colorMap) {
+                        return colorMap[windows];
+                    } else {
+                        // Default color if the status is not recognized
+                        return 'rgba(0, 0, 0, 0)'; // white or any default color you prefer
+                    }
+                }
+                
+                function getGasHeatingBackgroundColor(gasHeating) {
+                    // Define a mapping of string values to colors
+                    const colorMap = {
+                        "Fair": '#a6d96a', // light green
+                        "Good": '#1a9641', // green
+                        "Bad": '#f4a582', // orange
+                        "Damaged": '#d7191c' // red
+                    };
+                
+                    // Check if the status is in the colorMap
+                    if (gasHeating in colorMap) {
+                        return colorMap[gasHeating];
+                    } else {
+                        // Default color if the status is not recognized
+                        return 'rgba(0, 0, 0, 0)'; // white or any default color you prefer
+                    }
+                } 
+
+                function getWoodHeatingBackgroundColor(woodHeating) {
+                    // Define a mapping of string values to colors
+                    const colorMap = {
+                        "Fair": '#a6d96a', // light green
+                        "Good": '#1a9641', // green
+                        "Bad": '#f4a582', // orange
+                        "Damaged": '#d7191c', // red
+                        "N/A":'rgba(255, 255, 255, 1.0)'
+                    };
+                
+                    // Check if the status is in the colorMap
+                    if (woodHeating in colorMap) {
+                        return colorMap[woodHeating];
+                    } else {
+                        // Default color if the status is not recognized
+                        return 'rgba(255, 255, 255, 1.0)'; // white or any default color you prefer
+                    }
+                } 
+
                 // Get the appropriate background color for the value
-                var valueBackgroundColor = getValueBackgroundColor(studentsPrc);
+                var StudentsPrcBackgroundColor = getStudentsPrcBackgroundColor(studentsPrc);
+                var WindowsBackgroundColor = getWindowsBackgroundColor(windows);
+                var GasHeatingBackgroundColor = getGasHeatingBackgroundColor(gasHeating);
+                var WoodHeatingBackgroundColor = getWoodHeatingBackgroundColor(gasHeating);
+
 
                 tooltipContent = 
 
@@ -64,7 +124,14 @@ map.on('mousemove', 'featuresWithinIsochrone-layer', function (e) {
                 '<p><strong>Construction Year:</strong> ' + constrDate + '</p>' + 
                 '<p><strong>Assessment Date:</strong> ' + assessmentDate + '</p>' + 
                 '<p><strong>Number of Students:</strong> ' + students + '</p>' + 
-                '<p><strong>Capacity Used:</strong> <span style="background-color:' + valueBackgroundColor + '; padding: 2px 4px; border-radius: 3px;">' + studentsPrc + '%</span></p>';
+                '<p><strong>Capacity Used:</strong> <span style="background-color:' + StudentsPrcBackgroundColor + '; padding: 2px 4px; border-radius: 3px;">' + studentsPrc + '%</span></p>' + 
+                '<p><strong>Water System:</strong> ' + waterSystem + '</p>' +  
+                '<p><strong>Windows Condition:</strong> <span style="background-color:' + WindowsBackgroundColor + '; padding: 2px 4px; border-radius: 3px;">' + windows + '</span></p>' +
+                '<p><strong>Heating System:</strong> ' + heating + '</p>' + 
+                '<p><strong>Nat. Gas Heating Condition:</strong> <span style="background-color:' + GasHeatingBackgroundColor + '; padding: 2px 4px; border-radius: 3px;">' + gasHeating + '</span></p>' + 
+                '<p><strong>Wood Heating Condition:</strong> <span style="background-color:' + WoodHeatingBackgroundColor + '; padding: 2px 4px; border-radius: 3px;">' + woodHeating + '</span></p>'
+                ;
+                
         
             } else {
 
