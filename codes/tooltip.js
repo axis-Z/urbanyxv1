@@ -58,7 +58,7 @@ map.on('mousemove', 'featuresWithinIsochrone-layer', function (e) {
 
                 function getWindowsBackgroundColor(windows) {
                     // Define a mapping of string values to colors
-                    const colorMap = {
+                    const colorMapWindows = {
                         "Fair": '#a6d96a', // light green
                         "Good": '#1a9641', // green
                         "Bad": '#f4a582', // orange
@@ -66,8 +66,8 @@ map.on('mousemove', 'featuresWithinIsochrone-layer', function (e) {
                     };
                 
                     // Check if the status is in the colorMap
-                    if (windows in colorMap) {
-                        return colorMap[windows];
+                    if (windows in colorMapWindows) {
+                        return colorMapWindows[windows];
                     } else {
                         // Default color if the status is not recognized
                         return 'rgba(0, 0, 0, 0)'; // white or any default color you prefer
@@ -76,7 +76,7 @@ map.on('mousemove', 'featuresWithinIsochrone-layer', function (e) {
                 
                 function getGasHeatingBackgroundColor(gasHeating) {
                     // Define a mapping of string values to colors
-                    const colorMap = {
+                    const colorMapGas = {
                         "Fair": '#a6d96a', // light green
                         "Good": '#1a9641', // green
                         "Bad": '#f4a582', // orange
@@ -84,8 +84,8 @@ map.on('mousemove', 'featuresWithinIsochrone-layer', function (e) {
                     };
                 
                     // Check if the status is in the colorMap
-                    if (gasHeating in colorMap) {
-                        return colorMap[gasHeating];
+                    if (gasHeating in colorMapGas) {
+                        return colorMapGas[gasHeating];
                     } else {
                         // Default color if the status is not recognized
                         return 'rgba(0, 0, 0, 0)'; // white or any default color you prefer
@@ -94,20 +94,19 @@ map.on('mousemove', 'featuresWithinIsochrone-layer', function (e) {
 
                 function getWoodHeatingBackgroundColor(woodHeating) {
                     // Define a mapping of string values to colors
-                    const colorMap = {
+                    const colorMapWood = {
                         "Fair": '#a6d96a', // light green
                         "Good": '#1a9641', // green
                         "Bad": '#f4a582', // orange
                         "Damaged": '#d7191c', // red
-                        "N/A":'rgba(255, 255, 255, 1.0)'
                     };
                 
                     // Check if the status is in the colorMap
-                    if (woodHeating in colorMap) {
-                        return colorMap[woodHeating];
+                    if (woodHeating in colorMapWood) {
+                        return colorMapWood[woodHeating];
                     } else {
                         // Default color if the status is not recognized
-                        return 'rgba(255, 255, 255, 1.0)'; // white or any default color you prefer
+                        return 'rgba(255, 255, 255, .8)'; // white or any default color you prefer
                     }
                 } 
 
