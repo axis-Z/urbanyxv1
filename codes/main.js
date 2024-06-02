@@ -116,6 +116,121 @@ function generateIsochrone(lngLat) {
         // Adjust padding as needed
         map.once("idle", function () {
 
+            // Check if cell tower dataset is active
+            if (selectedDataSource === "public_schools") {
+
+                // Fetch avg fixed internet speed data
+                fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/public_schools.geojson')
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(publicSchoolData) {
+                   
+                   // Filter population data within isochrone boundary
+                   var publicSchoolsWithinIsochrone = {
+       
+                       type: "FeatureCollection",
+                       features: publicSchoolData.features.filter(function (feature) {
+                           return turf.booleanPointInPolygon(
+                               turf.point(feature.geometry.coordinates),
+                               data.features[0]
+                               );
+                           })
+                       };
+
+                       // Calculate student total numbers
+                       var studentSum = publicSchoolsWithinIsochrone.features.reduce(function(accumulator, feature) {
+                           return accumulator + feature.properties.students;
+                       }, 0);
+       
+                       // Calculate short-term investment
+                       var shortTermInvest = publicSchoolsWithinIsochrone.features.reduce(function(accumulator, feature) {
+                           return accumulator + feature.properties.urgent_cost;
+                       }, 0);
+
+                       // Calculate medium-term investment
+                       var mediumTermInvest = publicSchoolsWithinIsochrone.features.reduce(function(accumulator, feature) {
+                           return accumulator + feature.properties.non_urg_cost;
+                       }, 0);
+
+                       // Calculate long-term investment
+                       var longTermInvest = publicSchoolsWithinIsochrone.features.reduce(function(accumulator, feature) {
+                           return accumulator + feature.properties.long_cost;
+                       }, 0);
+
+                       // Calculate total investment
+                       var totalInvest = shortTermInvest + mediumTermInvest + longTermInvest;
+
+                       // Function to calculate median
+                       function calculateMedian(data) {
+   
+                           // Sort the data in ascending order
+                           data.sort(function(a, b) {
+                               return a - b;
+                           });
+                           var n = data.length;
+                           var medianIndex = Math.floor(n / 2);
+
+                           // If the dataset has an odd number of values
+                           if (n % 2 !==0) {
+                               return data[medianIndex];
+                           } else {
+
+                               // If the dataset has an even number of values
+                               var lowerMiddleValue = data[medianIndex - 1];
+                               var upperMiddleValue = data[medianIndex];
+                               return (lowerMiddleValue + upperMiddleValue) / 2;
+                           }                
+                       }
+
+                       // calculate the median of school occupancy (%)
+
+                       var SchoolOccupancy = [];
+
+                       publicSchoolsWithinIsochrone.features.forEach(function(feature) {
+                           SchoolOccupancy.push(feature.properties.students);
+                       });
+
+                       var medianSchoolOccupancy = calculateMedian(SchoolOccupancy);
+
+
+                       // Update legend with average relative wealth index
+                       updateSchoolLegend(studentSum, medianSchoolOccupancy, totalInvest);
+                   })
+           
+                   .catch(function(error) {    
+                       console.error('Error loading school data:', error);
+                   });
+
+                   function updateSchoolLegend(studentSum, medianSchoolOccupancy, totalInvest) {
+
+                       // Find the legend element by its ID
+                       var legend = document.getElementById("legend");
+
+                       // Function to determine color based on value
+                       function getColorForSchoolOccupancy(value) {
+                        
+                        // Define color thresholds for upload speed
+                        if (value < 30) { 
+                            return { backgroundColor: '#d7191c', fontColor: '#ffffff' }; // red
+                        } else if (value >= 30 && value < 75) {
+                            return { backgroundColor: '#a6d96a', fontColor: '#ffffff' }; // green
+                        } else if (value >= 75 && value < 100) {
+                            return { backgroundColor: '#fdae61', fontColor: '#ffffff' }; // orange
+                        } else {
+                            return { backgroundColor: '#d7191c', fontColor: '#ffffff' }; // red
+                        }
+                    }
+
+                       // Update the legend with the mob internet speed information
+               
+                       // Update the legend with fixed internet speed information
+                       legend.innerHTML += "<p class='legend-subhead'>" + "<strong><span class='innerhtml' style='font-size: 16px;'>Total School Students</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 18px;'>" + studentSum + "<span></p>";    
+                       legend.innerHTML += "<p class='legend-subhead'>" + "<strong><span class='innerhtml' style='font-size: 16px;'>Median School Occupancy (%)</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 18px; padding: 5px; border-radius: 3px; color:" + getColorForSchoolOccupancy(medianSchoolOccupancy).fontColor +"; background-color:" + getColorForSchoolOccupancy(medianSchoolOccupancy).backgroundColor + ";'>" + medianSchoolOccupancy + "<span></p>";    
+                       legend.innerHTML += "<p class='legend-subhead'>" + "<strong><span class='innerhtml' style='font-size: 16px;'>Total Investments Needed (₾)</strong></p>" + "<p>" + " <span class='innerhtml' style='font-size: 18px;'>" + totalInvest + "<span></p>";
+                  }
+               }
+
             // Fetch population data
             fetch('https://raw.githubusercontent.com/axis-Z/urbanyxv1/main/data/tbs_pop_points_2020.geojson')
             .then(function(response) {
@@ -539,6 +654,7 @@ function generateIsochrone(lngLat) {
                                     return '#bd0026';
                                 }
                             }
+
                             function getColorForDownloadSpeed(value) {
 
                                 // Define color thresholds for upload speed
@@ -966,6 +1082,8 @@ function generateIsochrone(lngLat) {
                         }
                     });
                 });
+
+                
                     
                     document.addEventListener("DOMContentLoaded", function () {
                                         
