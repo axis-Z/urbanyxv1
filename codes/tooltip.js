@@ -270,7 +270,7 @@ map.on('mousemove', 'featuresWithinIsochrone-layer', function (e) {
                 '<p><strong>Construction Year:</strong> ' + constrDate + '</p>' + 
                 '<p><strong>Assessment Date:</strong> ' + assessmentDate + '</p>' + 
                 '<p><strong>Number of Students:</strong> ' + students + '</p>' + 
-                '<p><strong>Capacity Used:</strong> <span style="background-color:' + StudentsPrcBackgroundColor + '; padding: 2px 4px; border-radius: 3px;">' + studentsPrc + '%</span></p>' + 
+                '<p><strong>School Occupancy Rate:</strong> <span style="background-color:' + StudentsPrcBackgroundColor + '; padding: 2px 4px; border-radius: 3px;">' + studentsPrc + '%</span></p>' + 
                 //'<p><strong>Water System:</strong> ' + waterSystem + '</p>' +  
                 //'<p><strong>Windows Condition:</strong> <span style="background-color:' + WindowsBackgroundColor + '; padding: 2px 4px; border-radius: 3px;">' + windows + '</span></p>' +
                 //'<p><strong>WC:</strong> <span style="background-color:' + WCBackgroundColor + '; padding: 2px 4px; border-radius: 3px;">' + wc + '</span></p>' +

@@ -2,10 +2,10 @@ mapboxgl.accessToken = "pk.eyJ1Ijoiam9yam9uZTkwIiwiYSI6ImNrZ3R6M2FvdTBwbmwycXBib
 
 var map = new mapboxgl.Map({
     container: "map",
-    style: 'mapbox://styles/mapbox/navigation-preview-night-v4',
+    style: 'mapbox://styles/jorjone90/cltetry3r00r301nw54sh4jal', //'mapbox://styles/mapbox/navigation-preview-night-v4',
     center: [44.812, 41.741787],
     zoom: 12,
-    maxZoom: 15.5,
+    maxZoom: 17, //15.5,
     //bearing: -36.26,
     //pitch: 72.29,
     attributionControl: false,
@@ -125,7 +125,7 @@ function generateIsochrone(lngLat) {
                     return response.json();
                 })
                 .then(function(publicSchoolData) {
-                   
+
                    // Filter population data within isochrone boundary
                    var publicSchoolsWithinIsochrone = {
        
@@ -188,7 +188,7 @@ function generateIsochrone(lngLat) {
                        var SchoolOccupancy = [];
 
                        publicSchoolsWithinIsochrone.features.forEach(function(feature) {
-                           SchoolOccupancy.push(feature.properties.students);
+                           SchoolOccupancy.push(feature.properties.occupancy);
                        });
 
                        var medianSchoolOccupancy = calculateMedian(SchoolOccupancy);
@@ -226,8 +226,8 @@ function generateIsochrone(lngLat) {
                
                        // Update the legend with fixed internet speed information
                        legend.innerHTML += "<p class='legend-subhead'>" + "<strong><span class='innerhtml' style='font-size: 16px;'>Total School Students</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 18px;'>" + studentSum + "<span></p>";    
-                       legend.innerHTML += "<p class='legend-subhead'>" + "<strong><span class='innerhtml' style='font-size: 16px;'>Median School Occupancy (%)</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 18px; padding: 5px; border-radius: 3px; color:" + getColorForSchoolOccupancy(medianSchoolOccupancy).fontColor +"; background-color:" + getColorForSchoolOccupancy(medianSchoolOccupancy).backgroundColor + ";'>" + medianSchoolOccupancy + "<span></p>";    
-                       legend.innerHTML += "<p class='legend-subhead'>" + "<strong><span class='innerhtml' style='font-size: 16px;'>Total Investments Needed (₾)</strong></p>" + "<p>" + " <span class='innerhtml' style='font-size: 18px;'>" + totalInvest + "<span></p>";
+                       legend.innerHTML += "<p class='legend-subhead'>" + "<strong><span class='innerhtml' style='font-size: 16px;'>Median School Occupancy</strong></p>" + "<p>" + "<span class='innerhtml' style='font-size: 18px; padding: 5px; border-radius: 3px; color:" + getColorForSchoolOccupancy(medianSchoolOccupancy).fontColor +"; background-color:" + getColorForSchoolOccupancy(medianSchoolOccupancy).backgroundColor + ";'>" + medianSchoolOccupancy + "%<span></p>";    
+                       legend.innerHTML += "<p class='legend-subhead'>" + "<strong><span class='innerhtml' style='font-size: 16px;'>Total Investments Needed</strong></p>" + "<p>" + " <span class='innerhtml' style='font-size: 18px;'>" + totalInvest + " (₾)<span></p>";
                   }
                }
 
